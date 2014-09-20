@@ -89,9 +89,6 @@ int main(int argc, char **argv)
     printArray(h_in, ARRAY_SIZE);
     batcherBitonicMergesort64<<<1, ARRAY_SIZE, ARRAY_SIZE * sizeof(float)>>>(d_out, d_in);
     
-    
-    printf("Your code executed in %g ms\n", timer.Elapsed());
-    
     // copy back the sum from GPU
     cudaMemcpy(h_out, d_out, ARRAY_BYTES, cudaMemcpyDeviceToHost);
     printArray(h_out, ARRAY_SIZE);
