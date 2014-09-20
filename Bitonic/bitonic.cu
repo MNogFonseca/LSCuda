@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <cuda_runtime.h>
 
+
 // Your job is to implemment a bitonic sort. A description of the bitonic sort
 // can be see at:
 // http://en.wikipedia.org/wiki/Bitonic_sort
@@ -44,12 +45,21 @@ __global__ void batcherBitonicMergesort64(float * d_out, const float * d_in)
     d_out[tid] = sdata[tid];
 }
 
+int compareFloat (const void * a, const void * b)
+{
+  if ( *(float*)a <  *(float*)b ) return -1;
+  if ( *(float*)a == *(float*)b ) return 0;
+  if ( *(float*)a >  *(float*)b ) return 1;
+  return 0;                     // should never reach this
+}
+
 void printArray(float* array, int n){
 	printf("\n");
 	for(int i = 0; i < n; i++){
 		printf("%f - ",array[i]);
 	}
 }
+
 
 int main(int argc, char **argv)
 {
@@ -74,12 +84,11 @@ int main(int argc, char **argv)
     cudaMalloc((void **) &d_in, ARRAY_BYTES);
     cudaMalloc((void **) &d_out, ARRAY_BYTES);
 
-    printArray(h_in, ARRAY_SIZE);
     // transfer the input array to the GPU
     cudaMemcpy(d_in, h_in, ARRAY_BYTES, cudaMemcpyHostToDevice); 
-
-    // launch the kernel
+    printArray(h_in, ARRAY_SIZE);
     batcherBitonicMergesort64<<<1, ARRAY_SIZE, ARRAY_SIZE * sizeof(float)>>>(d_out, d_in);
+    
     
     printf("Your code executed in %g ms\n", timer.Elapsed());
     
@@ -87,6 +96,7 @@ int main(int argc, char **argv)
     cudaMemcpy(h_out, d_out, ARRAY_BYTES, cudaMemcpyDeviceToHost);
     printArray(h_out, ARRAY_SIZE);
     
+  
     // free GPU memory allocation
     cudaFree(d_in);
     cudaFree(d_out);
