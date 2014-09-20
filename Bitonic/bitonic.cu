@@ -53,10 +53,10 @@ int compareFloat (const void * a, const void * b)
   return 0;                     // should never reach this
 }
 
-void printArray(float* array, int n){
+void printArray(float* in, float* out, int n){
 	printf("\n");
 	for(int i = 0; i < n; i++){
-		printf("%f - ",array[i]);
+		printf("%f - %f \n",in[i],out[i]);
 	}
 }
 
@@ -86,14 +86,12 @@ int main(int argc, char **argv)
 
     // transfer the input array to the GPU
     cudaMemcpy(d_in, h_in, ARRAY_BYTES, cudaMemcpyHostToDevice); 
-    printArray(h_in, ARRAY_SIZE);
     batcherBitonicMergesort64<<<1, ARRAY_SIZE, ARRAY_SIZE * sizeof(float)>>>(d_out, d_in);
     
     // copy back the sum from GPU
     cudaMemcpy(h_out, d_out, ARRAY_BYTES, cudaMemcpyDeviceToHost);
-    printArray(h_out, ARRAY_SIZE);
+    printArray(h_in, h_out, ARRAY_SIZE);
     
-  
     // free GPU memory allocation
     cudaFree(d_in);
     cudaFree(d_out);
