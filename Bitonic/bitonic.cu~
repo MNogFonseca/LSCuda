@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cuda_runtime.h>
-#include "compare.h"
 #include "gputimer.h"
 
 // Your job is to implemment a bitonic sort. A description of the bitonic sort
@@ -44,14 +43,6 @@ __global__ void batcherBitonicMergesort64(float * d_out, const float * d_in)
     }
     __syncthreads();
     d_out[tid] = sdata[tid];
-}
-
-int compareFloat (const void * a, const void * b)
-{
-  if ( *(float*)a <  *(float*)b ) return -1;
-  if ( *(float*)a == *(float*)b ) return 0;
-  if ( *(float*)a >  *(float*)b ) return 1;
-  return 0;                     // should never reach this
 }
 
 int main(int argc, char **argv)
