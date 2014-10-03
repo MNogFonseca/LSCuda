@@ -114,6 +114,7 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 			lMin_R = lMin_s[i];	
 		}
 	}
+	printf("lMin_R - %u", lMin_R);
 	return lMin_R;
 }
 
