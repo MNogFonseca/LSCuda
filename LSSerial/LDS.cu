@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N 4
 
 //pega o menor valor do vetor last que seja maior do que x
 __device__

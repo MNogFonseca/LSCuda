@@ -141,7 +141,7 @@ int main(){
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	unsigned int* h_lMin_s;      
-	int length = 12;
+	int length = 10;
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
