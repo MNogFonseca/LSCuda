@@ -120,7 +120,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 
 void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
-	printf("lMin_R %u - h_lMin_s%u\n",*lmin_R, h_lMin_s[0]);
+	printf("lMin_R %u - h_lMin_s %u\n",*lmin_R, h_lMin_s[0]);
 	for(i = 0; i < tam; i++){
 		if(*lmin_R > h_lMin_s[i]){
 			*lmin_R = h_lMin_s[i];	
@@ -180,8 +180,8 @@ int main(){
 				                    	&numSeqReady); //Número de threads prontos
 			
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*NUM_THREADS*length, cudaMemcpyHostToDevice);
-			printf("numSeqReady %u - %u - %u", numSeqReady, numSeqReady%THREAD_BLOCK, ceil(numSeqReady/THREAD_BLOCK));
-			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(numSeqReady/THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
+			printf("numSeqReady %u - %f - %f  ", numSeqReady, numSeqReady%THREAD_BLOCK, ceil(numSeqReady/THREAD_BLOCK));
+			decideLS<<<numSeqReady%THREAD_BLOCK, 1>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
