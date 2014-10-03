@@ -91,15 +91,14 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	if(index < numThread){
 		unsigned int lLIS, lLDS; 
 	
-		lLIS = LIS(vector+index, length);
-		lLDS = LDS(vector+index, length);
+		lLIS = LIS(vector+index*length, length);
+		lLDS = LDS(vector+index*length, length);
 
 		lmin[index] = lLIS;
 
 		if(lLDS < lmin[index]){
 			lmin[index] = lLDS;	
 		}
-
 	}
 	
 }
