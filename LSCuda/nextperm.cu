@@ -142,7 +142,7 @@ int main(){
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	unsigned int* h_lMin_s;      
-	int length = 5;
+	int length = 10;
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
@@ -180,8 +180,7 @@ int main(){
 				                    	&numSeqReady); //Número de threads prontos
 			
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*NUM_THREADS*length, cudaMemcpyHostToDevice);
-			printf("numSeqReady %u - %u - %f  ", numSeqReady,numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK));
-			decideLS<<<numSeqReady%THREAD_BLOCK, 1>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
+			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
