@@ -120,8 +120,8 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 
 void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
+	printf("lMin_R %u - h_lMin_s\n",*lmin_R, h_lMin_s[0]);
 	for(i = 0; i < tam; i++){
-		printf("%u\n",h_lMin_s[i]);
 		if(*lmin_R > h_lMin_s[i]){
 			*lmin_R = h_lMin_s[i];	
 		}
@@ -171,7 +171,7 @@ int main(){
 		int posInicial = 0;
 
 		memcpy(h_threadSequences,h_sequence, sizeof(int)*length);
-		cudaMemset(d_lMin_s, 0xFF, sizeof(int)*NUM_THREADS); //Seta os vetor com um número muito grande
+		cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande
 
 		while(1){
 			posInicial = criaSequencias(h_threadSequences, //Vetor com as sequências geradas
@@ -180,11 +180,11 @@ int main(){
 				                    	&numSeqReady); //Número de threads prontos
 			
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*NUM_THREADS*length, cudaMemcpyHostToDevice);
+			printf("numSeqReady %d - %d - %d", numSeqReady, numSeqReady%THREAD_BLOCK, ceil(numSeqReady/THREAD_BLOCK));
 			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(numSeqReady/THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
-			printf("teste\n");
 			reduceLMinR(&lMin_R, h_lMin_s, numSeqReady); //Calcular o lMinR das sequências ja calculadas
 
 			//Todos elementos do conjunto R já foram gerados
