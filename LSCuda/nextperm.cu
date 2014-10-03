@@ -120,7 +120,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 
 void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
-	printf("lMin_R %u - h_lMin_s %u\n",*lmin_R, h_lMin_s[0]);
 	for(i = 0; i < tam; i++){
 		if(*lmin_R > h_lMin_s[i]){
 			*lmin_R = h_lMin_s[i];	
