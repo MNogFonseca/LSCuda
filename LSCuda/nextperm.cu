@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 #define NUM_THREADS 1024
-#define THREAD_BLOCK 512
+#define THREAD_BLOCK 256
 
 void inversion(int* dest, int* in, int length){
 	int i;
@@ -189,7 +189,6 @@ int main(int argc, char *argv[]){
 			if(posInicial == -1){
 				break;
 			}
-			cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande			
 		}
 
 		//Define o maior valor encontrado entre os elementos de S
