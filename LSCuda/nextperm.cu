@@ -203,7 +203,6 @@ int main(int argc, char *argv[]){
 	}
 	end = clock();
 
-	printf("num = %d", c);
 	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
 
 	printf("Lmax R = %d\n",lMax_S);
