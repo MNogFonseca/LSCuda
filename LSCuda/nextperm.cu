@@ -180,7 +180,7 @@ int main(){
 				                    	&numSeqReady); //Número de threads prontos
 			
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*NUM_THREADS*length, cudaMemcpyHostToDevice);
-			decideLS<<<numSeqReady%THREAD_BLOCK, numSeqReady/THREAD_BLOCK>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
+			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(numSeqReady/THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
