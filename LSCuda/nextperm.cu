@@ -88,7 +88,7 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 __global__
 void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	int index = threadIdx.x + blockIdx.x*blockDim.x;
-	if(index <= numThread){
+	if(index < numThread){
 		unsigned int lLIS, lLDS; 
 	
 		lLIS = LIS(vector+index, length);
@@ -113,7 +113,7 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 			lMin_R = lMin_s[i];	
 		}
 	}
-	printf("lMin_R - %u\n", lMin_R);
+	printf("	lMin_R - %u\n", lMin_R);
 	printf("----------------------------------\n");
 	return lMin_R;
 }
