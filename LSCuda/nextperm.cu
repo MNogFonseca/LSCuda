@@ -120,7 +120,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
 	for(i = 0; i < tam; i++){
-		printf("h_lMin_s[%d] - %d - ", i, h_lMin_s[i]);
 		if(*lmin_R > h_lMin_s[i]){
 			*lmin_R = h_lMin_s[i];	
 		}
@@ -160,7 +159,6 @@ int main(){
 
 	start = clock();
 	unsigned int lMax_S = 0;
-	unsigned int lMin_R = 0xFF;
 
 	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
@@ -171,7 +169,7 @@ int main(){
 
 		memcpy(h_threadSequences,h_sequence, sizeof(int)*length);
 		cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande
-
+		unsigned int lMin_R = 0xFF;
 		while(1){
 			posInicial = criaSequencias(h_threadSequences, //Vetor com as sequências geradas
 						    		    h_threadSequences+(NUM_THREADS-2)*length, //Caso posInical !=1, esse ponteiro tem o ultimo elemento calculado sem ser inversão
@@ -192,7 +190,6 @@ int main(){
 		}
 
 		//Define o maior valor encontrado entre os elementos de S
-		printf("l_maxS %d\n", lMax_S);
 		if(lMax_S < lMin_R){
 			lMax_S = lMin_R;
 		}
