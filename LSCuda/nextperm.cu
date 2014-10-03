@@ -121,9 +121,9 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
 	for(i = 0; i < tam; i++){
+		printf("%u\n",h_lMin_s[i]);
 		if(*lmin_R > h_lMin_s[i]){
-			printf("%u\n",h_lMin_s[i]);
-				
+			*l_min_R = h_lMin_s[i];	
 		}
 	}
 
@@ -184,6 +184,7 @@ int main(){
 			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
+			printf("teste\n");
 			reduceLMinR(&lMin_R, h_lMin_s, numSeqReady); //Calcular o lMinR das sequências ja calculadas
 
 			//Todos elementos do conjunto R já foram gerados
