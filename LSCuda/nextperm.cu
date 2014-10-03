@@ -134,7 +134,7 @@ void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 //Determinar Max_{s \in S}(Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)))
 
 
-int main(int argc, void *argv[]){
+int main(int argc, char *argv[]){
 	int* h_sequence;            //Vetor com a sequência pivor do grupo
 	int* h_threadSequences;      //Vetor com as sequências criadas
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
