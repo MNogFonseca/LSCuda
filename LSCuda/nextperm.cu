@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 #define NUM_THREADS 1024
-#define THREAD_BLOCK 256
+#define THREAD_BLOCK 64
 
 void inversion(int* dest, int* in, int length){
 	int i;
@@ -70,29 +70,18 @@ int fatorial(int n){
 	return result;
 }
 
-int criaSequencias(int* dest, int* in,int length, int posInicial, unsigned int* numSec){
+void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
+	//Inserir o pivor em primeiro lugar, e sua inversão
+	memcpy(dest,in, sizeof(int)*length);
+	inversion(dest+length, dest, length);
+	*numSeqReady += 2;
+
+	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
-
-	if(posInicial == 0){
-		inversion(dest+length, dest,length);
+	for(i = 0; i < (length-1); i++, *numSeqReady+=2){
+		rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
+		inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
 	}
-	else{
-		rotation(dest, in, length);
-		inversion(dest+length, dest,length);
-	}
-
-	*numSec = 2;
-	posInicial++;
-	for(i = posInicial; i < (length); i++, *numSec+=2){
-		if(*numSec == NUM_THREADS){
-			return i;		
-		} 
-
-		rotation(dest + *numSec*length,dest + (*numSec-2)*length, length);
-		inversion(dest + (*numSec+1)*length,dest+(*numSec)*length, length);
-		
-	}
-	return -1;
 }
 
 //Min(|LIS(s)|, |LDS(s)|)
@@ -117,11 +106,25 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	
 }
 
-void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
+int reduceLMinR(unsigned int* lMin_s, int tam){
 	int i;
+	unsigned int lMin_R = 0xFF;
 	for(i = 0; i < tam; i++){
-		if(*lmin_R > h_lMin_s[i]){
-			*lmin_R = h_lMin_s[i];	
+		if(lMin_R > lMin_s[i]){
+			lMin_R = lMin_s[i];	
+		}
+	}
+	return lMin_R;
+}
+
+void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGroup){
+	int i;
+	unsigned int lMin_R;
+	//Número de conjuntos
+	for(i = 0; i < tamVec/tamGroup; i++){
+		lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
+		if(*lMax_S < lMin_R){
+			*lMax_S = lMin_R;
 		}
 	}
 
@@ -156,7 +159,7 @@ int main(int argc, char *argv[]){
 	for(i = 0; i < length; i++)
 		h_sequence[i] = i+1;
 
-	unsigned int numSeqReady = 0;
+	unsigned int numSeqReady = 0; //Número de sequêcias prontas
 
 	start = clock();
 	unsigned int lMax_S = 0;
@@ -164,41 +167,39 @@ int main(int argc, char *argv[]){
 	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
 	int counter = fatorial(length-1)/2;
-        //Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	while(counter){
-		int posInicial = 0;
+        
+    //Número de elementos em cada conjunto. Length (rotação) * 2 (inversão)    
+	int tamGroup = 2*length;
 
-		memcpy(h_threadSequences,h_sequence, sizeof(int)*length);
-		cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande			
-		unsigned int lMin_R = 0xFF;
-		while(1){
-			posInicial = criaSequencias(h_threadSequences, //Vetor com as sequências geradas
-						    		    h_threadSequences+(NUM_THREADS-2)*length, //Caso posInical !=1, esse ponteiro tem o ultimo elemento calculado sem ser inversão
-                                        length, posInicial, //Tamanho do Elemento, e quantidade de posições ja calculadas 
-				                    	&numSeqReady); //Número de threads prontos
-			
+	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
+	while(counter){
+		
+		//Gera todo o conjunto R
+		criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
+		    		   h_sequence, //Vetor pivor
+                       length,
+			           &numSeqReady); //Número de threads prontos
+		
+		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
+		if((numSeqReady+tamGroup) < NUM_THREADS){
+			cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande			
+
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*NUM_THREADS*length, cudaMemcpyHostToDevice);
 			cudaThreadSynchronize();
+			//Cada thread calcula o LIS e o LDS de cada sequência
 			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaThreadSynchronize();
+			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
-			reduceLMinR(&lMin_R, h_lMin_s, numSeqReady); //Calcular o lMinR das sequências ja calculadas
-			printf("numSeqReady - %d\n", numSeqReady);
-			//Todos elementos do conjunto R já foram gerados
-			if(posInicial == -1){
-				break;
-			}
-		}
-
-		//Define o maior valor encontrado entre os elementos de S
-		if(lMax_S < lMin_R){
-			lMax_S = lMin_R;
-		}
+			
+			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);
+			
+			numSeqReady = 0; 
+		}	
 
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
-		//printf("\n");
 		counter--;
 	}
 	end = clock();
@@ -206,4 +207,10 @@ int main(int argc, char *argv[]){
 	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
 
 	printf("Lmax R = %d\n",lMax_S);
+
+	free(h_sequence);
+	free(h_threadSequences);
+	free(h_lMin_s);
+	cudaFree(d_threadSequences);
+	cudaFree(d_lMin_s);
 }

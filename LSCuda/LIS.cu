@@ -87,5 +87,10 @@ unsigned int LIS(int* vet, int tam){
 	
 	}
 	
+	for(i = 0; i < tam+1; i++){
+		free(MP[i]);
+	}
+	free(MP);
+	free(last);
 	return lmax;
 }

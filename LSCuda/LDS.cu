@@ -82,5 +82,10 @@ unsigned int LDS(int* vet, int tam){
 			MP[l][pos] = last[l-1];	
 	}
 	
+	for(i = 0; i < tam+1; i++){
+		free(MP[i]);
+	}
+	free(MP);
+	free(last);
 	return lmax;
 }
