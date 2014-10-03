@@ -168,7 +168,6 @@ int main(){
 		int posInicial = 0;
 
 		memcpy(h_threadSequences,h_sequence, sizeof(int)*length);
-		cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande
 		unsigned int lMin_R = 0xFF;
 		while(1){
 			posInicial = criaSequencias(h_threadSequences, //Vetor com as sequências geradas
@@ -182,11 +181,12 @@ int main(){
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
 			reduceLMinR(&lMin_R, h_lMin_s, numSeqReady); //Calcular o lMinR das sequências ja calculadas
-			
+
 			//Todos elementos do conjunto R já foram gerados
 			if(posInicial == -1){
 				break;
-			}			
+			}
+			cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande			
 		}
 
 		//Define o maior valor encontrado entre os elementos de S
