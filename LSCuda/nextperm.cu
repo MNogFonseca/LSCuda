@@ -106,7 +106,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		lLDS = LDS(vector+index, length);
 
 		if(lLIS < lmin[index]){
-		
 			lmin[index] = lLIS;
 		}
 
@@ -121,6 +120,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
 	for(i = 0; i < tam; i++){
+		printf("h_lMin_s[%d] - %d - ", i, h_lMin_s[i]);
 		if(*lmin_R > h_lMin_s[i]){
 			*lmin_R = h_lMin_s[i];	
 		}
@@ -141,7 +141,7 @@ int main(){
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	unsigned int* h_lMin_s;      
-	int length = 10;
+	int length = 4;
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
