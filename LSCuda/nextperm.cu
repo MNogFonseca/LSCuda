@@ -3,8 +3,8 @@
 #include "LIS.cu"
 #include "LDS.cu"
 #include <time.h>
-#define NUM_THREADS 1024
-#define THREAD_BLOCK 256
+#define NUM_THREADS 1536
+#define THREAD_BLOCK 64
 
 void inversion(int* dest, int* in, int length){
 	int i;
