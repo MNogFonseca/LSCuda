@@ -140,7 +140,7 @@ int main(){
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	unsigned int* h_lMin_s;      
-	int length = 10;
+	int length = 6;
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
@@ -182,7 +182,7 @@ int main(){
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
 			reduceLMinR(&lMin_R, h_lMin_s, numSeqReady); //Calcular o lMinR das sequências ja calculadas
-
+			
 			//Todos elementos do conjunto R já foram gerados
 			if(posInicial == -1){
 				break;
