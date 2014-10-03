@@ -163,7 +163,6 @@ int main(int argc, char *argv[]){
 
 	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
-	int c = 0;
 	int counter = fatorial(length-1)/2;
         //Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
@@ -185,13 +184,11 @@ int main(int argc, char *argv[]){
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*NUM_THREADS, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();	
 			reduceLMinR(&lMin_R, h_lMin_s, numSeqReady); //Calcular o lMinR das sequências ja calculadas
-
+			printf("numSeqReady - %d\n", numSeqReady);
 			//Todos elementos do conjunto R já foram gerados
 			if(posInicial == -1){
 				break;
 			}
-			printf("Aqui\n");
-			c++;
 		}
 
 		//Define o maior valor encontrado entre os elementos de S
@@ -203,7 +200,6 @@ int main(int argc, char *argv[]){
 		next_permutation(h_sequence+1,length-1);
 		//printf("\n");
 		counter--;
-		c++;
 	}
 	end = clock();
 
