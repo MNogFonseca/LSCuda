@@ -110,7 +110,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 			lmin[index] = lLIS;
 		}
 
-		if(lLDS < *lmin){
+		if(lLDS < lmin[index]){
 			lmin[index] = lLDS;	
 		}
 
@@ -118,12 +118,12 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	
 }
 
-void reduceLMinR(unsigned int* lminR, unsigned int* h_lMin_s, int tam){
+void reduceLMinR(unsigned int* lmin_R, unsigned int* h_lMin_s, int tam){
 	int i;
 	for(i = 0; i < tam; i++){
-		if(*lminR > h_lMin_s[i]){
+		if(*lmin_R > h_lMin_s[i]){
 			printf("%u\n",h_lMin_s[i]);
-			*lminR = h_lMin_s[i];
+				
 		}
 	}
 
