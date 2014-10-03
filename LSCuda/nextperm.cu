@@ -190,6 +190,7 @@ int main(int argc, char *argv[]){
 			if(posInicial == -1){
 				break;
 			}
+			printf("Aqui\n");
 			c++;
 		}
 
