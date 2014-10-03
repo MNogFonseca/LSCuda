@@ -77,7 +77,6 @@ int fatorial(int n){
 
 //Min(|LIS(s)|, |LDS(s)|)
 
-__global__
 void decideLS(int *vector, int length, int* lmin){
 	
 	unsigned int lLIS, lLDS, latual; 
@@ -110,7 +109,7 @@ int main(){
 	int* vector;
 	int* vecRotation;
 	int* vecInversion;
-	int length = 12;
+	int length = 10;
 	clock_t start,end;
 	
 	vector = (int*) malloc(sizeof(int)*length);

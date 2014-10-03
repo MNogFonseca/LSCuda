@@ -56,7 +56,7 @@ int compareFloat (const void * a, const void * b)
 void printArray(float* in, float* out, int n){
 	printf("\n");
 	for(int i = 0; i < n; i++){
-		printf("%f - %f \n",in[i],out[i]);
+		printf("%d - (%f - %f) \n",i, in[i],out[i]);
 	}
 }
 

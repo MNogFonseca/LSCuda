@@ -77,7 +77,6 @@ int fatorial(int n){
 
 //Min(|LIS(s)|, |LDS(s)|)
 
-__global__
 void decideLS(int *vector, int length, int* lmin){
 	
 	unsigned int lLIS, lLDS, latual; 
