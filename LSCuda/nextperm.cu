@@ -192,6 +192,7 @@ int main(){
 		}
 
 		//Define o maior valor encontrado entre os elementos de S
+		printf("l_maxS %d\n", lMax_S);
 		if(lMax_S < lMin_R){
 			lMax_S = lMin_R;
 		}
