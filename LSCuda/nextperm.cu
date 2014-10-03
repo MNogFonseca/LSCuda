@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 #define NUM_THREADS 1024
-#define THREAD_BLOCK 64
+#define THREAD_BLOCK 256
 
 void inversion(int* dest, int* in, int length){
 	int i;
