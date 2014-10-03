@@ -122,7 +122,7 @@ void reduceLMinR(unsigned int* lminR, unsigned int* h_lMin_s, int tam){
 	int i;
 	for(i = 0; i < tam; i++){
 		if(*lminR > h_lMin_s[i]){
-			printf("%u\n",h_lMin_s[i])
+			printf("%u\n",h_lMin_s[i]);
 			*lminR = h_lMin_s[i];
 		}
 	}
