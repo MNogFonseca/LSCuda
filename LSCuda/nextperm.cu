@@ -140,7 +140,7 @@ int main(){
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	unsigned int* h_lMin_s;      
-	int length = 6;
+	int length = 4;
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
@@ -168,6 +168,7 @@ int main(){
 		int posInicial = 0;
 
 		memcpy(h_threadSequences,h_sequence, sizeof(int)*length);
+		cudaMemset(d_lMin_s, 0xFF, sizeof(unsigned 	int)*NUM_THREADS); //Seta os vetor com um número muito grande			
 		unsigned int lMin_R = 0xFF;
 		while(1){
 			posInicial = criaSequencias(h_threadSequences, //Vetor com as sequências geradas
