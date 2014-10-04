@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#if !defined LENGTH
+#define LENGTH 5
+#endif
 
 //pega o menor valor do vetor last que seja maior do que x
 __device__
@@ -39,7 +42,7 @@ void LISVetCopy(int* dest, int* in,int tam){
 __device__
 unsigned int LIS(int* vet, int tam){
 
-	int *last = (int*) malloc(sizeof(int)*tam); //inicializa o vetor com
+	int last[LENGTH]; //inicializa o vetor com
 						//com os ultimos elementos de MP
 	int i;											 
 	for(i =0;i<tam;i++){
@@ -49,11 +52,8 @@ unsigned int LIS(int* vet, int tam){
 	int lmax = 1;  //maior tamanho de subsequencia
 
 
-	int** MP = (int**) malloc(sizeof(int*)*(tam+1)); //inicializa a matriz de mais promissores
-	for(i = 0; i < tam+1; i++){
-		MP[i] = (int*) malloc(sizeof(int)*tam);
-	}
-
+	int MP[LENGTH+1][LENGTH+1]; //inicializa a matriz de mais promissores
+	
 	for(i = 0;i<tam; i++){
 		int j;
 		for(j = 0;j<tam; j++){

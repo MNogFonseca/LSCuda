@@ -5,6 +5,7 @@
 #include <time.h>
 #define NUM_THREADS 1536
 #define THREAD_BLOCK 64
+#define LENGTH 10
 
 void inversion(int* dest, int* in, int length){
 	int i;
