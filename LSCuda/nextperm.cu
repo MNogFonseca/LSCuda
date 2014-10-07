@@ -158,6 +158,7 @@ int main(int argc, char *argv[]){
 		h_sequence[i] = i+1;
 
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
+	unsigned int numSeqReadyAnt = 0;
 
 	start = clock();
 	unsigned int lMax_S = 0;
@@ -177,6 +178,15 @@ int main(int argc, char *argv[]){
 		    		   h_sequence, //Vetor pivor
                        length,
 			           &numSeqReady); //Número de threads prontos
+
+		if(numSeqReadyAnt != 0){
+			cudaThreadSynchronize();
+			//Envia os resultados obtidos para o host
+			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
+
+			cudaThreadSynchronize();	
+			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
+		}
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) < NUM_THREADS){
@@ -185,14 +195,9 @@ int main(int argc, char *argv[]){
 			cudaThreadSynchronize();
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
-			cudaThreadSynchronize();
-			//Envia os resultados obtidos para o host
-			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-			cudaThreadSynchronize();	
 			
-			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);
-			
+			numSeqReadyAnt = numSeqReady;
 			numSeqReady = 0; 
 		}	
 
