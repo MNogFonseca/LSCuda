@@ -7,6 +7,7 @@
 #define THREAD_BLOCK 1024
 #define LENGTH 10
 
+
 void inversion(int* dest, int* in, int length){
 	int i;
 	for(i = 0; i < length; i++){

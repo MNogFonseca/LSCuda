@@ -3,13 +3,13 @@
 #if !defined LENGTH
 #define LENGTH 5
 #endif
-//pega o menor valor do vetor last que seja maior do que x
 
+//pega o menor valor do vetor last que seja maior do que x
 __device__
-int LDSgetLast(int* last,int x,int tam){
+int LISgetLast(int* last,int x,int tam){
 	int i;
 	for(i=0; i < tam ;i++){
-		if(last[i] < x ){
+		if(last[i] > x ){
 			return i+1;
 		}		
 	}
@@ -19,7 +19,7 @@ int LDSgetLast(int* last,int x,int tam){
 
 //pega a posicao valida para inserir um elemento no vetor vet
 __device__
-int LDSgetPos(int vet[],int tam){
+int LISgetPos(int vet[],int tam){
 	int i;
 	for(i =0;i < tam;i++){
 
@@ -32,7 +32,7 @@ int LDSgetPos(int vet[],int tam){
 
 //copia um vetor para outro
 __device__
-void LDSVetCopy(int* dest, int* in,int tam){
+void LISVetCopy(int* dest, int* in,int tam){
 	int i;
 	for(i = 0; i<tam;i++){
 		dest[i] = in[i];
@@ -40,18 +40,20 @@ void LDSVetCopy(int* dest, int* in,int tam){
 }
 
 __device__
-unsigned int LDS(int* vet, int tam){	
+unsigned int LIS(int* vet, int tam){
+
 	int last[LENGTH]; //inicializa o vetor com
 						//com os ultimos elementos de MP
 	int i;											 
 	for(i =0;i<tam;i++){
-		last[i] = 0;
+		last[i] = 1000;
 	}
 	
 	int lmax = 1;  //maior tamanho de subsequencia
 
-	int MP[LENGTH+1][LENGTH+1]; //inicializa a matriz de mais promissores
 
+	int MP[LENGTH+1][LENGTH+1]; //inicializa a matriz de mais promissores
+	
 	for(i = 0;i<tam; i++){
 		int j;
 		for(j = 0;j<tam; j++){
@@ -66,7 +68,7 @@ unsigned int LDS(int* vet, int tam){
 
 	for(i=1; i < tam; i++){
 
-		int l = LDSgetLast(last,vet[i],tam); //pega  valor de l
+		int l = LISgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
 		if(l > lmax){ 
@@ -76,10 +78,13 @@ unsigned int LDS(int* vet, int tam){
 			last[l-1] = vet[i]; //atualiza o vetor last
 
 		 	//concatena os vetores de MP
-			LDSVetCopy(MP[l],MP[l-1],tam);
+			LISVetCopy(MP[l],MP[l-1],tam);
 
-			int pos = LDSgetPos(MP[l],tam);			
-			MP[l][pos] = last[l-1];	
+			int pos = LISgetPos(MP[l],tam);			
+			MP[l][pos] = last[l-1];
+
+
+	
 	}
 	
 	return lmax;

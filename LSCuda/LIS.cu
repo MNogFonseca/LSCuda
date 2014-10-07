@@ -4,6 +4,7 @@
 #define LENGTH 5
 #endif
 
+
 //pega o menor valor do vetor last que seja maior do que x
 __device__
 int LISgetLast(int* last,int x,int tam){
