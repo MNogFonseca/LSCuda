@@ -3,9 +3,20 @@
 #include "LIS.cu"
 #include "LDS.cu"
 #include <time.h>
+
 #define NUM_THREADS 8192
-#define THREAD_BLOCK 1024
+#define THREAD_PER_BLOCK 1024
 #define LENGTH 10
+/*
+#define NUM_SM 8
+#define MAX_THREAD_PER_SM 2048
+#define LENGTH 10
+#define MAX_SHARED_PER_BLOCK 49152
+#define SHARED_PER_THREAD 	(LENGTH*LENGTH+LENGTH)
+#define THREAD_PER_BLOCK 	MAX_SHARED_PER_BLOCK/SHARED_PER_THREAD
+#define NUM_BLOCKS 			(THREAD_PER_SM*NUM_SM)/THREAD_PER_BLOCK
+#define NUM_THREADS 		NUM_BLOCKS*THREAD_PER_BLOCK
+*/
 
 
 void inversion(int* dest, int* in, int length){
@@ -89,12 +100,20 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
 void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
+	extern __shared__ int s_vet[];
 	int index = threadIdx.x + blockIdx.x*blockDim.x;
+
 	if(index < numThread){
+		int i;
+		for(i = 0; i < length; i++){
+			s_vet[i] = vector[index*length+i];
+		}
+		__syncthreads();
+
 		unsigned int lLIS, lLDS; 
 	
-		lLIS = LIS(vector+index*length, length);
-		lLDS = LDS(vector+index*length, length);
+		lLIS = LIS(s_vet, length);
+		lLDS = LDS(s_vet, length);
 
 		lmin[index] = lLIS;
 
@@ -136,26 +155,25 @@ void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGr
 //Determinar Max_{s \in S}(Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)))
 
 
-int main(int argc, char *argv[]){
+int main(){
 	int* h_sequence;            //Vetor com a sequência pivor do grupo
 	int* h_threadSequences;      //Vetor com as sequências criadas
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	unsigned int* h_lMin_s;      
 
-	int length = atoi(argv[1]);
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
-	h_sequence = (int*) malloc(sizeof(int)*length);
-	h_threadSequences = (int*) malloc(sizeof(int)*length*NUM_THREADS);
+	h_sequence = (int*) malloc(sizeof(int)*LENGTH);
+	h_threadSequences = (int*) malloc(sizeof(int)*LENGTH*NUM_THREADS);
 	h_lMin_s = (unsigned int*) malloc(sizeof(unsigned int)*NUM_THREADS);
-	cudaMalloc(&d_threadSequences, sizeof(int)*length*NUM_THREADS);
+	cudaMalloc(&d_threadSequences, sizeof(int)*LENGTH*NUM_THREADS);
 	cudaMalloc(&d_lMin_s, sizeof(int)*NUM_THREADS);
 
 	//Gera a sequencia primária, de menor ordem léxica	
 	int i;
-	for(i = 0; i < length; i++)
+	for(i = 0; i < LENGTH; i++)
 		h_sequence[i] = i+1;
 
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
@@ -166,18 +184,18 @@ int main(int argc, char *argv[]){
 
 	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
-	int counter = fatorial(length-1)/2;
+	int counter = fatorial(LENGTH-1)/2;
         
     //Número de elementos em cada conjunto. Length (rotação) * 2 (inversão)    
-	int tamGroup = 2*length;
+	int tamGroup = 2*LENGTH;
 
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
 		//Gera todo o conjunto R
-		criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
+		criaSequencias(h_threadSequences + numSeqReady*LENGTH, //Vetor com as sequências geradas
 		    		   h_sequence, //Vetor pivor
-                       length,
+                       LENGTH,
 			           &numSeqReady); //Número de threads prontos
 
 		if(numSeqReadyAnt != 0){
@@ -192,10 +210,11 @@ int main(int argc, char *argv[]){
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) < NUM_THREADS){
 
-			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
+			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*LENGTH, cudaMemcpyHostToDevice);
 			cudaThreadSynchronize();
 			//Cada thread calcula o LIS e o LDS de cada sequência
-			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
+			decideLS<<<numSeqReady%THREAD_PER_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK), sizeof(int)*LENGTH>>>
+					   (d_threadSequences, d_lMin_s, LENGTH, numSeqReady);
 
 			
 			numSeqReadyAnt = numSeqReady;
@@ -203,7 +222,7 @@ int main(int argc, char *argv[]){
 		}	
 
 		//Cria a próxima sequência na ordem lexicográfica
-		next_permutation(h_sequence+1,length-1);
+		next_permutation(h_sequence+1,LENGTH-1);
 		counter--;
 	}
 	end = clock();
