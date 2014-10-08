@@ -60,7 +60,7 @@ unsigned int LDS(int* vet, int* last, int* MP, int tam){
 
 	for(i=1; i < tam; i++){
 
-		int l = LDSgetLast(last,vet[i],tam); //pega  valor de l
+		int l = 0;//LDSgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
 		if(l > lmax){ 
@@ -72,8 +72,7 @@ unsigned int LDS(int* vet, int* last, int* MP, int tam){
 		 	//concatena os vetores de MP
 			LDSVetCopy(MP+l*tam,MP+(l-1)*tam,tam);
 
-			//int pos = LDSgetPos(MP+l*tam,tam);			
-			int pos = 0;
+			int pos = LDSgetPos(MP+l*tam,tam);			
 			MP[l*tam+pos] = last[l-1];	
 	}
 	

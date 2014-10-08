@@ -60,7 +60,7 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 
 	for(i=1; i < tam; i++){
 
-		int l = LISgetLast(last,vet[i],tam); //pega  valor de l
+		int l = 0;//LISgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
 		if(l > lmax){
@@ -72,8 +72,8 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 		 	//concatena os vetores de MP
 			LISVetCopy(MP+l*tam,MP+(l-1)*tam,tam);
 
-			//int pos = LISgetPos(MP+l*tam,tam);			
-			int pos = 0;
+			int pos = LISgetPos(MP+l*tam,tam);			
+			
 			MP[l*tam+pos] = last[l-1];
 	}
 	
