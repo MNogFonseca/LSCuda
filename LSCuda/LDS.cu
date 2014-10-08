@@ -73,7 +73,7 @@ unsigned int LDS(int* vet, int* last, int* MP, int tam){
 			LDSVetCopy(MP+l*tam,MP+(l-1)*tam,tam);
 
 			//int pos = LDSgetPos(MP+l*tam,tam);			
-			pos = 0;
+			int pos = 0;
 			MP[l*tam+pos] = last[l-1];	
 	}
 	
