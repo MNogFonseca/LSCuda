@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define NUM_THREADS 8192
-#define THREAD_PER_BLOCK 1024
+#define THREAD_PER_BLOCK 80
 #define LENGTH 10
 /*
 #define NUM_SM 8
@@ -101,24 +101,26 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 __global__
 void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	extern __shared__ int s_vet[];
-	int index = threadIdx.x + blockIdx.x*blockDim.x;
+	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
+	int s_step = (length+1)*(length+1) + 2*length;
+	int s_index = s_step*threadIdx.x; //Indice da shared memory
 
-	if(index < numThread){
+	if(tid < numThread){
 		int i;
 		for(i = 0; i < length; i++){
-			s_vet[i] = vector[index*length+i];
+			s_vet[s_index+i] = vector[tid*length+i];
 		}
 		__syncthreads();
 
 		unsigned int lLIS, lLDS; 
 	
-		lLIS = LIS(s_vet, length);
-		lLDS = LDS(s_vet, length);
+		lLIS = LIS(s_vet+s_index, s_vet+s_index + length, s_vet+s_index+2*length, length);
+		lLDS = LDS(s_vet+s_index, s_vet+s_index + length, s_vet+s_index+2*length, length);;
 
-		lmin[index] = lLIS;
+		lmin[tid] = lLIS;
 
-		if(lLDS < lmin[index]){
-			lmin[index] = lLDS;	
+		if(lLDS < lmin[tid]){
+			lmin[tid] = lLDS;	
 		}
 	}
 	
