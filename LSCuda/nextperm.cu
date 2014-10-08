@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define NUM_THREADS 8192
-#define THREAD_PER_BLOCK 85
+#define THREAD_PER_BLOCK 256
 #define LENGTH 10
 /*
 #define NUM_SM 8
