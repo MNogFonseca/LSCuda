@@ -4,8 +4,8 @@
 #include "LDS.cu"
 #include <time.h>
 
-#define NUM_THREADS 800
-#define THREAD_PER_BLOCK 80
+#define NUM_THREADS 8192
+#define THREAD_PER_BLOCK 64
 #define LENGTH 10
 /*
 #define NUM_SM 8
