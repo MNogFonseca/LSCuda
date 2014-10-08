@@ -46,15 +46,6 @@ unsigned int LDS(int* vet, int* last, int* MP, int tam){
 	
 	int lmax = 1;  //maior tamanho de subsequencia
 
-	for(i = 0;i<tam; i++){
-		int j;
-		for(j = 0;j<tam; j++){
-			
-			MP[i*tam+j] = -1;
-		}
-	}
-
-
 	MP[tam] = vet[0];
 	last[0] = vet[0];
 
