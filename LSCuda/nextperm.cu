@@ -114,8 +114,8 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 
 		unsigned int lLIS, lLDS; 
 	
-		lLIS = LIS(s_vet+s_index, s_vet+s_index + length, s_vet+s_index+2*length, length);
-		lLDS = LDS(s_vet+s_index, s_vet+s_index + length, s_vet+s_index+2*length, length);;
+		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
+		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
 
 		lmin[tid] = lLIS;
 
@@ -215,7 +215,10 @@ int main(){
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*LENGTH, cudaMemcpyHostToDevice);
 			cudaThreadSynchronize();
 			//Cada thread calcula o LIS e o LDS de cada sequência
-			decideLS<<<numSeqReady%THREAD_PER_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK), sizeof(int)*LENGTH>>>
+			dim3 num_threads(numSeqReady%THREAD_PER_BLOCK);
+			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
+			int tam_shared = ((LENGTH+1)*(LENGTH+1)+2*LENGTH)*num_blocks.x*sizeof(int);
+			decideLS<<<num_threads, num_blocks , tam_shared>>>
 					   (d_threadSequences, d_lMin_s, LENGTH, numSeqReady);
 
 			

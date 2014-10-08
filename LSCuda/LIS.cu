@@ -55,7 +55,6 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 		}
 	}
 
-
 	MP[tam] = vet[0];
 	last[0] = vet[0];
 
@@ -64,7 +63,7 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 		int l = LISgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
-		if(l > lmax){ 
+		if(l > lmax){
 			lmax ++;
 		}
 
@@ -75,9 +74,6 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 
 			int pos = LISgetPos(MP+l*tam,tam);			
 			MP[l*tam+pos] = last[l-1];
-
-
-	
 	}
 	
 	return lmax;
