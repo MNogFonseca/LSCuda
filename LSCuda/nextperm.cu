@@ -235,8 +235,4 @@ int main(int argc, char *argv[]){
 
 	printf("Lmax R = %d\n",lMax_S);
 
-	free(h_sequence);
-	free(h_threadSequences);
-	free(h_lMin_s);
-	
 }
