@@ -215,7 +215,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*sizeof(int);
-			decideLS<<<THREAD_PER_BLOCK, num_blocks>>>
+			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 
 			
