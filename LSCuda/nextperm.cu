@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 
-#define NUM_THREADS 512
+#define NUM_THREADS 1536
 #define THREAD_PER_BLOCK 64
 /*
 #define NUM_SM 8
@@ -82,22 +82,28 @@ int fatorial(int n){
 }
 
 void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
-	//Inserir o pivor em primeiro lugar, e sua inversão
+	//Inserir o pivor em primeiro lugar com suas rotações, e sua inversão também com suas rotações	
 	memcpy(dest,in, sizeof(int)*length);
-	inversion(dest+length, dest, length);
-	*numSeqReady += 2;
+	memcpy(dest+length,in, sizeof(int)*(length-1));
 
+	inversion(dest+(2*length-1), dest, length);
+	memcpy(dest+(3*length-1),dest+(2*length-1), sizeof(int)*(length-1));
+	*numSeqReady += 2;
+	printVector(dest, 2*length-1);
+	printVector(dest+(2*length-1), 2*length-1);
+	printf("\n");
+	/*
 	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
 	for(i = 1; i < (length); i++, *numSeqReady+=2){
 		rotation(dest + (2*i)*length,dest + (2*i-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
 		inversion(dest + (2*i+1)*length,dest+(2*i)*length, length);		
-	}
+	}*/
 }
 
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
-void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lMax_S){
+void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	extern __shared__ int s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
 	int s_step = (length+1)*(length+1) + 2*length;
@@ -110,14 +116,12 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 		unsigned int lLIS, lLDS; 
 		
 		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
+		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
 		lmin[tid] = lLIS;
-		//if(lLIS > lMax_S){
-			lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 
-			if(lLDS < lmin[tid]){
-				lmin[tid] = lLDS;	
-			}
-		//}
+		if(lLDS < lmin[tid]){
+			lmin[tid] = lLDS;	
+		}
 	}
 	
 }
@@ -166,9 +170,9 @@ int main(int argc, char *argv[]){
 
 	//Aloca memória dos vetores	
 	h_sequence = (int*) malloc(sizeof(int)*length);
-	h_threadSequences = (int*) malloc(sizeof(int)*length*NUM_THREADS);
+	h_threadSequences = (int*) malloc(sizeof(int)*(2*length-1)*NUM_THREADS);
 	h_lMin_s = (unsigned int*) malloc(sizeof(unsigned int)*NUM_THREADS);
-	cudaMalloc(&d_threadSequences, sizeof(int)*length*NUM_THREADS);
+	cudaMalloc(&d_threadSequences, sizeof(int)*(2*length-1)*NUM_THREADS);
 	cudaMalloc(&d_lMin_s, sizeof(int)*NUM_THREADS);
 
 	//Gera a sequencia primária, de menor ordem léxica	
@@ -187,14 +191,14 @@ int main(int argc, char *argv[]){
 	int counter = fatorial(length-1)/2;
         
     //Número de elementos em cada conjunto. length (rotação) * 2 (inversão)    
-	int tamGroup = 2*length;
+	int tamGroup = 2;
 
 
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
 		//Gera todo o conjunto R
-		criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
+		criaSequencias(h_threadSequences + numSeqReady*(2*length-1), //Vetor com as sequências geradas
 		    		   h_sequence, //Vetor pivor
                        length,
 			           &numSeqReady); //Número de threads prontos
@@ -215,7 +219,7 @@ int main(int argc, char *argv[]){
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
+					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaGetLastError();
 			
 			numSeqReadyAnt = numSeqReady;
@@ -235,7 +239,7 @@ int main(int argc, char *argv[]){
 		int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
+			       (d_threadSequences, d_lMin_s, length, numSeqReady);
 		cudaGetLastError();
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
