@@ -195,10 +195,10 @@ int main(int argc, char *argv[]){
 	while(counter){
 		
 		//Gera todo o conjunto R
-		criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
+		/*criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
 		    		   h_sequence, //Vetor pivor
                        length,
-			           &numSeqReady); //Número de threads prontos
+			           &numSeqReady); //Número de threads prontos*/
 
 		if(numSeqReadyAnt != 0){
 			//cudaThreadSynchronize();
