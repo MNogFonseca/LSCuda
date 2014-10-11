@@ -107,8 +107,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		int i;
 		printf("BB%d\n", tid);
 		for(i = 0; i < length; i++){
-			vector[tid*length+i]++;
-			
+			s_vet[s_index*threadIdx.x+i] = vector[tid*length+i];
 		}
 		printf("CC%d\n", tid);
 		unsigned int lLIS, lLDS; 
