@@ -60,7 +60,7 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 
 	for(i=1; i < tam; i++){
 
-		int l = 0;//LISgetLast(last,vet[i],tam); //pega  valor de l
+		int l = LISgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
 		if(l > lmax){

@@ -60,7 +60,7 @@ unsigned int LDS(int* vet, int* last, int* MP, int tam){
 
 	for(i=1; i < tam; i++){
 
-		int l = 0;//LDSgetLast(last,vet[i],tam); //pega  valor de l
+		int l = LDSgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
 		if(l > lmax){ 

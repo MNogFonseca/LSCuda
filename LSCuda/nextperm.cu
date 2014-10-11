@@ -109,7 +109,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		for(i = 0; i < length; i++){
 			s_vet[s_index+i] = vector[tid*length+i];
 		}
-		__syncthreads();
 
 		unsigned int lLIS, lLDS; 
 	
