@@ -203,7 +203,7 @@ int main(int argc, char *argv[]){
 		if(numSeqReadyAnt != 0){
 			//printf("	Entrou 2 \n");
 			//Envia os resultados obtidos para o host
-			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
+			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
 
 			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 		}
@@ -234,7 +234,6 @@ int main(int argc, char *argv[]){
 	if(numSeqReady != 0){
 		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
 			
-			
 		//Cada thread calcula o LIS e o LDS de cada sequência
 		dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 		int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
@@ -243,7 +242,7 @@ int main(int argc, char *argv[]){
 			       (d_threadSequences, d_lMin_s, length, numSeqReady);
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
+		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);
 
 	}
 
