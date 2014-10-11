@@ -204,13 +204,13 @@ int main(int argc, char *argv[]){
 			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
+			//calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 		}
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) >= NUM_THREADS){
 			//printf("	Entrou 1\n");
-			//cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
+			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
 			
 			//printf("	Entrou 2 \n");
 			//Cada thread calcula o LIS e o LDS de cada sequência
