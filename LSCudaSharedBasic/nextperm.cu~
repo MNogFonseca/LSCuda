@@ -3,20 +3,9 @@
 #include "LIS.cu"
 #include "LDS.cu"
 #include <time.h>
-
-#define NUM_THREADS 640000
-#define THREAD_PER_BLOCK 96
-/*
-#define NUM_SM 8
-#define MAX_THREAD_PER_SM 2048
-#define length 10
-#define MAX_SHARED_PER_BLOCK 49152
-#define SHARED_PER_THREAD 	(length*length+length)
-#define THREAD_PER_BLOCK 	MAX_SHARED_PER_BLOCK/SHARED_PER_THREAD
-#define NUM_BLOCKS 			(THREAD_PER_SM*NUM_SM)/THREAD_PER_BLOCK
-#define NUM_THREADS 		NUM_BLOCKS*THREAD_PER_BLOCK
-*/
-
+#define NUM_THREADS 8192
+#define THREAD_BLOCK 1024
+#define LENGTH 10
 
 void inversion(int* dest, int* in, int length){
 	int i;
@@ -99,26 +88,17 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
 void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
-	extern __shared__ int s_vet[];
-	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
-	int s_step = (length+1)*(length+1) + 2*length;
-	int s_index = s_step*threadIdx.x; //Indice da shared memory
-
-	if(tid < numThread){
-		int i;
-		for(i = 0; i < length; i++){
-			s_vet[s_index+i] = vector[tid*length+i];
-		}
-
+	int index = threadIdx.x + blockIdx.x*blockDim.x;
+	if(index < numThread){
 		unsigned int lLIS, lLDS; 
 	
-		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
-		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
+		lLIS = LIS(vector+index*length, length);
+		lLDS = LDS(vector+index*length, length);
 
-		lmin[tid] = lLIS;
+		lmin[index] = lLIS;
 
-		if(lLDS < lmin[tid]){
-			lmin[tid] = lLDS;	
+		if(lLDS < lmin[index]){
+			lmin[index] = lLDS;	
 		}
 	}
 	
@@ -163,7 +143,6 @@ int main(int argc, char *argv[]){
 	unsigned int* h_lMin_s;      
 
 	int length = atoi(argv[1]);
-
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
@@ -184,11 +163,11 @@ int main(int argc, char *argv[]){
 	start = clock();
 	unsigned int lMax_S = 0;
 
-	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
+	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
 	int counter = fatorial(length-1)/2;
         
-    //Número de elementos em cada conjunto. length (rotação) * 2 (inversão)    
+    //Número de elementos em cada conjunto. Length (rotação) * 2 (inversão)    
 	int tamGroup = 2*length;
 
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
@@ -201,10 +180,11 @@ int main(int argc, char *argv[]){
 			           &numSeqReady); //Número de threads prontos
 
 		if(numSeqReadyAnt != 0){
-			//cudaThreadSynchronize();
+			cudaThreadSynchronize();
 			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
+			cudaThreadSynchronize();	
 			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 		}
 		
@@ -212,12 +192,9 @@ int main(int argc, char *argv[]){
 		if((numSeqReady+tamGroup) < NUM_THREADS){
 
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
+			cudaThreadSynchronize();
 			//Cada thread calcula o LIS e o LDS de cada sequência
-			dim3 num_threads(numSeqReady%THREAD_PER_BLOCK);
-			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = ((length+1)*(length+1)+2*length)*num_blocks.x*sizeof(int);
-			decideLS<<<num_threads, num_blocks , tam_shared>>>
-					   (d_threadSequences, d_lMin_s, length, numSeqReady);
+			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
 
 			
 			numSeqReadyAnt = numSeqReady;

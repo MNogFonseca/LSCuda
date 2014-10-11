@@ -1,12 +1,8 @@
-#define STACKSIZE 32768    /* tamanho de pilha das threads */
-#define _XOPEN_SOURCE 600  /* para compilar no MacOS */
-
-
 #include <stdio.h>
 #include <stdlib.h>
-#define N 4
 
 //pega o menor valor do vetor last que seja maior do que x
+__device__
 int LISgetLast(int* last,int x,int tam){
 	int i;
 	for(i=0; i < tam ;i++){
@@ -19,6 +15,7 @@ int LISgetLast(int* last,int x,int tam){
 }
 
 //pega a posicao valida para inserir um elemento no vetor vet
+__device__
 int LISgetPos(int vet[],int tam){
 	int i;
 	for(i =0;i < tam;i++){
@@ -31,6 +28,7 @@ int LISgetPos(int vet[],int tam){
 }
 
 //copia um vetor para outro
+__device__
 void LISVetCopy(int* dest, int* in,int tam){
 	int i;
 	for(i = 0; i<tam;i++){
@@ -38,22 +36,7 @@ void LISVetCopy(int* dest, int* in,int tam){
 	}
 }
 
-//printa a matriz de mais provaveis sequencias de serem a LIS
-void LISprintMP(int* mat,int tam){
-	int i;
-	for(i =0 ; i<tam ; i++){
-
-		if(mat[i]== -1){
-			break;
-		}
-		else
-			printf("%d -",mat[i]);
-	}
-	printf("\n");	
-}
-
-
-
+__device__
 unsigned int LIS(int* vet, int tam){
 
 	int *last = (int*) malloc(sizeof(int)*tam); //inicializa o vetor com
@@ -103,21 +86,6 @@ unsigned int LIS(int* vet, int tam){
 
 	
 	}
-	free(last);
-	for(i = 0; i < tam+1; i++)
-		free(MP[i]);
-	free(MP);
+	
 	return lmax;
 }
-
-/*
-int main(){
-	int vet[N] = {9,5,3,4};
-	int i;
-	
-
-	int lmax = LIS(vet,N);
-	printf("lmax = %d\n", lmax);
-
-	return 0;
-}*/

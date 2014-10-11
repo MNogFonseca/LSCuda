@@ -105,12 +105,14 @@ void decideLS(int *vector, int length, int* lmin){
 //Determinar Max_{s \in S}(Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)))
 
 
-int main(){
+int main(int argc, char* argv[]){
 	int* vector;
 	int* vecRotation;
-	int* vecInversion;
-	int length = 10;
+	int* vecInversion;	
+	int length = atoi(argv[1]);
+	printf("%d\n",length);
 	clock_t start,end;
+
 	
 	vector = (int*) malloc(sizeof(int)*length);
 	vecRotation = (int*) malloc(sizeof(int)*length);
@@ -134,27 +136,27 @@ int main(){
 		unsigned int lminR = length;	
 		//printf("Permutação: ");
 		//printVector(vector,length);
-		decideLS(vector, length, &lminR);
+		//decideLS(vector, length, &lminR);
 
 		memcpy(vecInversion,vector, sizeof(int)*length);
 		inversion(vecInversion, length);
 		//printf("Inversão: ");
 		//printVector(vecInversion,length);
-		decideLS(vecInversion, length, &lminR);
+		//decideLS(vecInversion, length, &lminR);
 
 		memcpy(vecRotation,vector, sizeof(int)*length);
 		for(i = 0; i < length-1; i++){
 			rotation(vecRotation, length);
 			//printf("Rotações: ");
 			//printVector(vecRotation, length);
-			decideLS(vecRotation, length, &lminR);
+			//decideLS(vecRotation, length, &lminR);
 
 
 			memcpy(vecInversion,vecRotation, sizeof(int)*length);
 			inversion(vecInversion, length);
 			//printf("Inversão: ");
 			//printVector(vecInversion,length);
-			decideLS(vecInversion, length, &lminR);
+			//decideLS(vecInversion, length, &lminR);
 		}
 		
 		//Define o maior valor encontrado entre os elementos de S
@@ -169,6 +171,8 @@ int main(){
 	end = clock();
 
 	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
-
 	printf("Lmax R = %d\n",lmaxS);
+	free(vector);
+	free(vecInversion);
+	free(vecRotation);
 }

@@ -1,12 +1,11 @@
-#define STACKSIZE 32768    /* tamanho de pilha das threads */
-#define _XOPEN_SOURCE 600  /* para compilar no MacOS */
-
-
 #include <stdio.h>
 #include <stdlib.h>
-#define N 4
-
+#if !defined LENGTH
+#define LENGTH 5
+#endif
 //pega o menor valor do vetor last que seja maior do que x
+
+__device__
 int LDSgetLast(int* last,int x,int tam){
 	int i;
 	for(i=0; i < tam ;i++){
@@ -19,6 +18,7 @@ int LDSgetLast(int* last,int x,int tam){
 }
 
 //pega a posicao valida para inserir um elemento no vetor vet
+__device__
 int LDSgetPos(int vet[],int tam){
 	int i;
 	for(i =0;i < tam;i++){
@@ -31,6 +31,7 @@ int LDSgetPos(int vet[],int tam){
 }
 
 //copia um vetor para outro
+__device__
 void LDSVetCopy(int* dest, int* in,int tam){
 	int i;
 	for(i = 0; i<tam;i++){
@@ -38,24 +39,9 @@ void LDSVetCopy(int* dest, int* in,int tam){
 	}
 }
 
-//printa a matriz de mais provaveis sequencias de serem a LIS
-void LDSprintMP(int* mat,int tam){
-	int i;
-	for(i =0 ; i<tam ; i++){
-
-		if(mat[i]== -1){
-			break;
-		}
-		else
-			printf("%d -",mat[i]);
-	}
-	printf("\n");	
-}
-
-
-
+__device__
 unsigned int LDS(int* vet, int tam){	
-	int *last = (int*) malloc(sizeof(int)*tam); //inicializa o vetor com
+	int last[LENGTH]; //inicializa o vetor com
 						//com os ultimos elementos de MP
 	int i;											 
 	for(i =0;i<tam;i++){
@@ -64,10 +50,7 @@ unsigned int LDS(int* vet, int tam){
 	
 	int lmax = 1;  //maior tamanho de subsequencia
 
-	int** MP = (int**) malloc(sizeof(int*)*(tam+1)); //inicializa a matriz de mais promissores
-	for(i = 0; i < tam+1; i++){
-		MP[i] = (int*) malloc(sizeof(int)*tam);
-	}
+	int MP[LENGTH+1][LENGTH+1]; //inicializa a matriz de mais promissores
 
 	for(i = 0;i<tam; i++){
 		int j;
@@ -99,20 +82,5 @@ unsigned int LDS(int* vet, int tam){
 			MP[l][pos] = last[l-1];	
 	}
 	
-	free(last);
-	for(i = 0; i < tam+1; i++)
-		free(MP[i]);
-	free(MP);
 	return lmax;
 }
-/*
-int main(){
-	int vet[N] = {9,5,3,4};
-	int i;
-	
-
-	int lmax = LDS(vet,N);
-	printf("lmax = %d\n", lmax);
-
-	return 0;
-}*/
