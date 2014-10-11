@@ -90,8 +90,8 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
 	for(i = 0; i < (length-1); i++, *numSeqReady+=2){
-		rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
-		inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
+		//rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
+		//inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
 	}
 }
 
@@ -195,10 +195,10 @@ int main(int argc, char *argv[]){
 	while(counter){
 		
 		//Gera todo o conjunto R
-		/*criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
+		criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
 		    		   h_sequence, //Vetor pivor
                        length,
-			           &numSeqReady); //Número de threads prontos*/
+			           &numSeqReady); //Número de threads prontos
 
 		if(numSeqReadyAnt != 0){
 			//cudaThreadSynchronize();
