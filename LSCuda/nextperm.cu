@@ -208,10 +208,10 @@ int main(int argc, char *argv[]){
 		}
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
-		if((numSeqReady+tamGroup) > NUM_THREADS){
+		if((numSeqReady+tamGroup) >= NUM_THREADS){
 			printf("	Entrou 1 %d\n", sizeof(int)*numSeqReady*length);
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
-			
+			cudaGetLastError();
 			printf("	Entrou 2 \n");
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
