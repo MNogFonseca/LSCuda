@@ -238,6 +238,5 @@ int main(int argc, char *argv[]){
 	free(h_sequence);
 	free(h_threadSequences);
 	free(h_lMin_s);
-	cudaFree(d_threadSequences);
-	cudaFree(d_lMin_s);
+	
 }
