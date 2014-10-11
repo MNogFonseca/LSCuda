@@ -108,8 +108,11 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	int s_index = s_step*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
 		int i;
-		for(i = 0; i < 2*length-1; i++){
+		for(i = 0; i < (2*length-1); i++){
 			s_vet[s_index+i] = vector[tid*length+i];
+			if(tid == 6){
+				printf("%d\n", s_vet[s_index+i]);
+			}
 		}
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
