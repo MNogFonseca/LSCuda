@@ -214,7 +214,8 @@ int main(int argc, char *argv[]){
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = ((length+1)*(length+1)+2*length)*num_blocks.x*sizeof(int);
+			printf("%d\n",num_blocks.x);
+			int tam_shared = ((length+1)*(length+1)+2*length)*64*sizeof(int);
 			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 
