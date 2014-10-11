@@ -243,6 +243,11 @@ int main(int argc, char *argv[]){
 
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
+	if(numSeqReadyAnt != 0){
+		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
+
+		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
+	}
 
 	cudaThreadSynchronize();
 	end = clock();
