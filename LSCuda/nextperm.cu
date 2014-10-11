@@ -102,15 +102,16 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
 	int s_step = (length+1)*(length+1) + 2*length;
 	int s_index = s_step*threadIdx.x; //Indice da shared memory
-	printf("%d\n", tid);
+	printf("AA%d - %d\n", tid, numThread);
 	if(tid < numThread){
 		int i;
+		printf("BB%d\n", tid);
 		for(i = 0; i < length; i++){
 			s_vet[s_index+i] = vector[tid*length+i];
 		}
 
 		unsigned int lLIS, lLDS; 
-		printf("%d\n", tid);
+		printf("BB%d\n", tid);
 		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
 		printf("%d - %d - %d\n", tid, lLIS, lLDS);
