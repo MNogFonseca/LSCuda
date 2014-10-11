@@ -90,11 +90,9 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
 	for(i = 0; i < (length-1); i++, *numSeqReady+=2){
-		printf("%u\n",*numSeqReady);
 		rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
 		inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
 	}
-	printf("	%u\n",*numSeqReady);
 }
 
 //Min(|LIS(s)|, |LDS(s)|)
@@ -211,17 +209,17 @@ int main(int argc, char *argv[]){
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) > NUM_THREADS){
-			printf("	Entrou 1 %d\n");
+			printf("	Entrou 1 %d\n", sizeof(int)*numSeqReady*length);
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
-			printf("	Entrou 2 %d\n");
+			printf("	Entrou 2 \n");
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
-			printf("	Entrou 3 %d\n");
+			printf("	Entrou 3 \n");
 			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 
-			printf("	Entrou 4 %d\n");
+			printf("	Entrou 4  \n");
 			numSeqReadyAnt = numSeqReady;
 			numSeqReady = 0; 
 		}	
