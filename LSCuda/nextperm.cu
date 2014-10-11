@@ -4,8 +4,8 @@
 #include "LDS.cu"
 #include <time.h>
 
-#define NUM_THREADS 1536
-#define THREAD_PER_BLOCK 85
+#define NUM_THREADS 32000
+#define THREAD_PER_BLOCK 64
 /*
 #define NUM_SM 8
 #define MAX_THREAD_PER_SM 2048
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]){
 			//printf("	Entrou 3 \n");
 			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
-
+			cudaGetLastError();
 			//printf("	Entrou 4  \n");
 			numSeqReadyAnt = numSeqReady;
 			numSeqReady = 0; 
