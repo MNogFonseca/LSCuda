@@ -102,7 +102,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
 	int s_step = (length+1)*(length+1) + 2*length;
 	int s_index = s_step*threadIdx.x; //Indice da shared memory
-	printf("%d\n",blockDim.x);
+	printf("%d\n",blockDim.x);	
 	if(tid < numThread){
 		int i;
 		for(i = 0; i < length; i++){
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]){
 		dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 		int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 		
-		decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
+		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
 			       (d_threadSequences, d_lMin_s, length, numSeqReady);
 		cudaGetLastError();
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
