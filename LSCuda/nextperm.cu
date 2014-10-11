@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define NUM_THREADS 640000
-#define THREAD_PER_BLOCK 256
+#define THREAD_PER_BLOCK 128
 /*
 #define NUM_SM 8
 #define MAX_THREAD_PER_SM 2048
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_threads(numSeqReady%THREAD_PER_BLOCK);
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = ((length+1)*(length+1)+2*length)*num_blocks.x*sizeof(int);
+			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 			decideLS<<<num_threads, num_blocks , tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 
