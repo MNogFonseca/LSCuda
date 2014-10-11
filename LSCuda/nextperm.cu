@@ -201,7 +201,7 @@ int main(int argc, char *argv[]){
 			           &numSeqReady); //Número de threads prontos
 
 		if(numSeqReadyAnt != 0){
-			//cudaThreadSynchronize();
+			cudaThreadSynchronize();
 			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
