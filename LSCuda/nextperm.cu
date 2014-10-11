@@ -97,7 +97,7 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
-void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
+void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lMax_S){
 	extern __shared__ int s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
 	int s_step = (length+1)*(length+1) + 2*length;
@@ -110,11 +110,13 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		unsigned int lLIS, lLDS; 
 		
 		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
-		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
 		lmin[tid] = lLIS;
+		if(lLIS > lMax_S){
+			lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 
-		if(lLDS < lmin[tid]){
-			lmin[tid] = lLDS;	
+			if(lLDS < lmin[tid]){
+				lmin[tid] = lLDS;	
+			}
 		}
 	}
 	
@@ -213,7 +215,7 @@ int main(int argc, char *argv[]){
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMin_s, length, numSeqReady);
+					   (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
 			cudaGetLastError();
 			
 			numSeqReadyAnt = numSeqReady;
