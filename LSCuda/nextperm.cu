@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 
-#define NUM_THREADS 320000
+#define NUM_THREADS 8000
 #define THREAD_PER_BLOCK 64
 /*
 #define NUM_SM 8
@@ -215,6 +215,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
+			printf("%d - %d\n",num_blocks.x, numSeqReady);
 			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 
