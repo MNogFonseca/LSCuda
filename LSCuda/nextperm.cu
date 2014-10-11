@@ -66,7 +66,7 @@ int next_permutation(int *array, size_t length) {
 
 void printVector(int* array, int length){
 	int k;
-	for(k = 0; k < 4; k++){
+	for(k = 0; k < length; k++){
 		printf("%d - ",array[k]);	
 	}
 	printf("\n");
