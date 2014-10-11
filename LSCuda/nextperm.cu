@@ -222,7 +222,7 @@ int main(int argc, char *argv[]){
 			
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
+			int tam_shared = ((length+1)*(length+1)+3*length-1)*THREAD_PER_BLOCK*sizeof(int);
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaGetLastError();
