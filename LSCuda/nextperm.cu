@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 
-#define NUM_THREADS 8000
+#define NUM_THREADS 1000
 #define THREAD_PER_BLOCK 64
 /*
 #define NUM_SM 8
@@ -94,6 +94,7 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 		rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
 		inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
 	}
+	printf("	%u\n",*numSeqReady);
 }
 
 //Min(|LIS(s)|, |LDS(s)|)
