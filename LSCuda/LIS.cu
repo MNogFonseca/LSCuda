@@ -73,9 +73,6 @@ unsigned int LIS(int* vet, int* last, int* MP, int tam){
 			LISVetCopy(MP+l*tam,MP+(l-1)*tam,tam);
 
 			int pos = LISgetPos(MP+l*tam,tam);
-			if(pos != 0){
-				printf("Vai dar certo?");
-			}
 			
 			MP[l*tam+pos] = last[l-1];
 	}
