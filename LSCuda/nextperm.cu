@@ -190,6 +190,7 @@ int main(int argc, char *argv[]){
     //Número de elementos em cada conjunto. length (rotação) * 2 (inversão)    
 	int tamGroup = 2*length;
 
+	/*
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
@@ -217,8 +218,8 @@ int main(int argc, char *argv[]){
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 			//printf("	Entrou 3 \n");
-			/*decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
-					   (d_threadSequences, d_lMin_s, length, numSeqReady);*/
+			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
+					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 
 			//printf("	Entrou 4  \n");
 			numSeqReadyAnt = numSeqReady;
@@ -228,7 +229,7 @@ int main(int argc, char *argv[]){
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
 		counter--;
-	}
+	}*/
 
 	end = clock();
 
