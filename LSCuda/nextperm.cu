@@ -227,7 +227,7 @@ int main(int argc, char *argv[]){
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) >= NUM_THREADS){
-			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
+			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
 			
 			//Cada thread calcula o LIS e o LDS de cada sequência
@@ -235,7 +235,6 @@ int main(int argc, char *argv[]){
 			int tam_shared = ((length+1)*(length+1)+3*length-1)*THREAD_PER_BLOCK*sizeof(int);
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
-			cudaGetLastError();
 			
 			numSeqReadyAnt = numSeqReady;
 			numSeqReady = 0; 
@@ -247,7 +246,7 @@ int main(int argc, char *argv[]){
 	}
 
 	if(numSeqReady != 0){
-		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
+		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
 		//Cada thread calcula o LIS e o LDS de cada sequência
 		dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
@@ -255,7 +254,7 @@ int main(int argc, char *argv[]){
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
 			       (d_threadSequences, d_lMin_s, length, numSeqReady);
-		cudaGetLastError();
+		
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
