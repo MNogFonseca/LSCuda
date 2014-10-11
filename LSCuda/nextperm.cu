@@ -231,6 +231,7 @@ int main(int argc, char *argv[]){
 		counter--;
 	}
 
+	cudaThreadSynchronize();
 	end = clock();
 
 	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
