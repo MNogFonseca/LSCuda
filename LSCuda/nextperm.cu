@@ -111,7 +111,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		}
 
 		unsigned int lLIS, lLDS; 
-		printf("BB%d\n", tid);
+		printf("CC%d\n", tid);
 		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
 		printf("%d - %d - %d\n", tid, lLIS, lLDS);
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
-
+			printf("")
 			decideLS<<<THREAD_PER_BLOCK, num_blocks, tam_shared>>>
 					   (d_threadSequences, d_lMin_s, length, numSeqReady);
 			cudaGetLastError();
