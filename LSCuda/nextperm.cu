@@ -89,9 +89,9 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 
 	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
-	for(i = 0; i < (length-1); i++, *numSeqReady+=2){
-		//rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
-		//inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
+	for(i = 1; i < (length); i++, *numSeqReady+=2){
+		rotation(dest + (2*i)*length,dest + (2*i-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
+		inversion(dest + (2*i+1)*length,dest+(2*i)*length, length);		
 	}
 }
 
