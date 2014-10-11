@@ -201,7 +201,7 @@ int main(int argc, char *argv[]){
 			           &numSeqReady); //Número de threads prontos
 
 		if(numSeqReadyAnt != 0){
-			cudaThreadSynchronize();
+			printf("	Entrou 2 \n");
 			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
@@ -210,10 +210,10 @@ int main(int argc, char *argv[]){
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) >= NUM_THREADS){
-			//printf("	Entrou 1\n");
+			printf("	Entrou 1\n");
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
 			
-			//printf("	Entrou 2 \n");
+			
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
