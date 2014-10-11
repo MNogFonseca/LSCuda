@@ -115,12 +115,12 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		}
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
-		for(i = 0; i < length; i++, s_vet++){
-			lLIS = LIS(s_vet + s_index, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
-			lLDS = LDS(s_vet + s_index, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
+		for(i = 0; i < length; i++){
+			lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
+			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
 
 			if(lLIS < lmin[tid]){
-				lmin[tid] = lLLIS;	
+				lmin[tid] = lLIS;	
 			}
 
 			if(lLDS < lmin[tid]){
