@@ -67,9 +67,9 @@ int next_permutation(int *array, size_t length) {
 void printVector(int* array, int length){
 	int k;
 	for(k = 0; k < 4; k++){
-		//printf("%d - ",array[k]);	
+		printf("%d - ",array[k]);	
 	}
-	//printf("\n");
+	printf("\n");
 }
 
 int fatorial(int n){
@@ -91,7 +91,7 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	*numSeqReady += 2;
 	printVector(dest, 2*length-1);
 	printVector(dest+(2*length-1), 2*length-1);
-	printf("\n");
+	printf("-------\n");
 	/*
 	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
