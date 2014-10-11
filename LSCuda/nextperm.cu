@@ -111,13 +111,13 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 		
 		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 		lmin[tid] = lLIS;
-		if(lLIS > lMax_S){
+		//if(lLIS > lMax_S){
 			lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 
 			if(lLDS < lmin[tid]){
 				lmin[tid] = lLDS;	
 			}
-		}
+		//}
 	}
 	
 }
