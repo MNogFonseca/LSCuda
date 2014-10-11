@@ -106,22 +106,29 @@ __global__
 void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	extern __shared__ int s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
-	int s_step = (length+1)*(length+1) + 2*length;
+	int s_step = (length+1)*(length+1) + 3*length -1;
 	int s_index = s_step*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
 		int i;
-		for(i = 0; i < length; i++){
+		for(i = 0; i < 2*length-1; i++){
 			s_vet[s_index+i] = vector[tid*length+i];
 		}
 		unsigned int lLIS, lLDS; 
-		
-		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
-		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
-		lmin[tid] = lLIS;
+		lmin[tid] = 1000;
+		for(i = 0; i < length; i++, s_vet++){
+			lLIS = LIS(s_vet + s_index, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
+			lLDS = LDS(s_vet + s_index, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
 
-		if(lLDS < lmin[tid]){
-			lmin[tid] = lLDS;	
+			if(lLIS < lmin[tid]){
+				lmin[tid] = lLLIS;	
+			}
+
+			if(lLDS < lmin[tid]){
+				lmin[tid] = lLDS;	
+			}
 		}
+		
+		
 	}
 	
 }
