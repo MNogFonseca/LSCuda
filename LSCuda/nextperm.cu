@@ -211,7 +211,7 @@ int main(int argc, char *argv[]){
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) > NUM_THREADS){
-			printf("%d - %d\n",num_blocks.x, numSeqReady);
+			printf(" - %d\n", numSeqReady);
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
