@@ -209,7 +209,7 @@ int main(int argc, char *argv[]){
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) >= NUM_THREADS){
-			printf("	Entrou 1 %d\n", sizeof(int)*numSeqReady*length);
+			printf("	Entrou 1\n");
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
 			cudaGetLastError();
 			printf("	Entrou 2 \n");
