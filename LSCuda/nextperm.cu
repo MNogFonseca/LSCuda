@@ -108,12 +108,10 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		for(i = 0; i < length; i++){
 			s_vet[s_index+i] = vector[tid*length+i];
 		}
-		printf("CC%d\n", tid);
 		unsigned int lLIS, lLDS; 
 		
 		lLIS = LIS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);
 		lLDS = LDS(s_vet + s_index, s_vet + s_index + length, s_vet + s_index + 2*length, length);;
-		printf("%d - %d - %d\n", tid, lLIS, lLDS);
 		lmin[tid] = lLIS;
 
 		if(lLDS < lmin[tid]){
