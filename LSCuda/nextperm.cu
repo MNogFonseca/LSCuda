@@ -89,9 +89,7 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	inversion(dest+(2*length-1), dest, length);
 	memcpy(dest+(3*length-1),dest+(2*length-1), sizeof(int)*(length-1));
 	*numSeqReady += 2;
-	printVector(dest, 2*length-1);
-	printVector(dest+(2*length-1), 2*length-1);
-	printf("-------\n");
+	
 	/*
 	//Rotaciona o pivor, e inverte os elementos produzidos
 	int i;
