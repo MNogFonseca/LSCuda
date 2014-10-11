@@ -4,7 +4,7 @@
 #include "LDS.cu"
 #include <time.h>
 
-#define NUM_THREADS 3200
+#define NUM_THREADS 320000
 #define THREAD_PER_BLOCK 64
 /*
 #define NUM_SM 8
@@ -242,8 +242,7 @@ int main(int argc, char *argv[]){
 			       (d_threadSequences, d_lMin_s, length, numSeqReady);
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);
-
+		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
 
 	cudaThreadSynchronize();
