@@ -201,11 +201,10 @@ int main(int argc, char *argv[]){
 			           &numSeqReady); //Número de threads prontos
 
 		if(numSeqReadyAnt != 0){
-			cudaThreadSynchronize();
+			//cudaThreadSynchronize();
 			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-			cudaThreadSynchronize();	
 			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 		}
 		
@@ -213,7 +212,6 @@ int main(int argc, char *argv[]){
 		if((numSeqReady+tamGroup) < NUM_THREADS){
 
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
-			cudaThreadSynchronize();
 			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_threads(numSeqReady%THREAD_PER_BLOCK);
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
