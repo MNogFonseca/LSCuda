@@ -89,6 +89,10 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	inversion(dest+(2*length-1), dest, length);
 	memcpy(dest+(3*length-1),dest+(2*length-1), sizeof(int)*(length-1));
 	*numSeqReady += 2;
+
+	if(numSeqReady == 8){
+		printVector(dest,2*length-1);
+	}
 	
 	/*
 	//Rotaciona o pivor, e inverte os elementos produzidos
@@ -110,12 +114,11 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 		int i;
 		for(i = 0; i < (2*length-1); i++){
 			s_vet[s_index+i] = vector[tid*length+i];
-			if(tid == 6){
-				printf("%d\n", s_vet[s_index+i]);
-			}
 		}
+
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
+
 		if(tid == 6){
 			int j;
 			for(j = 0; j < 2*length-1; j++){
@@ -123,6 +126,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 			}
 			printf("\n");
 		}
+
 		for(i = 0; i < length; i++){
 			lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
 			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
