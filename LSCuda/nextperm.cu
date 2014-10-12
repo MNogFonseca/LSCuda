@@ -138,20 +138,9 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				if(lLDS < lMax_S)
 					return;
 			}
-			if(tid == 0){
-				for(int i = 0; i < 2*length-1; i++){
-					printf("%d - ", s_vet[s_index+i]);
-				}
-				printf("\n");
-			}
 			inversion(s_vet + s_index, s_vet + s_index + length -1, length);
 			rotation(s_vet + s_index, length);
-			if(tid == 0){
-				for(int i = 0; i < 2*length-1; i++){
-					printf("%d - ", s_vet[s_index+i]);
-				}
-				printf("\n\n");
-			}
+			
 		}
 	}
 	
