@@ -243,7 +243,7 @@ int main(int argc, char *argv[]){
 	}
 
 	if(numSeqReady != 0){
-		printf("Entrou\n", );
+		printf("Entrou\n");
 		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
 		//Cada thread calcula o LIS e o LDS de cada sequência
