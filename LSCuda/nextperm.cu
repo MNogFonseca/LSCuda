@@ -257,7 +257,7 @@ int main(int argc, char *argv[]){
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 		cudaThreadSynchronize();
 
-		printf("Entrou 2\n");
+		printf("Entrou 2 - %d\n", d_lMin_s[6]);
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
 
