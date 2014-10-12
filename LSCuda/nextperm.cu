@@ -113,7 +113,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread){
 	if(tid < numThread){
 		int i;
 		for(i = 0; i < (2*length-1); i++){
-			s_vet[s_index+i] = vector[tid*length+i];
+			s_vet[s_index+i] = vector[tid*(2*length-1)+i];
 		}
 
 		unsigned int lLIS, lLDS; 
