@@ -160,8 +160,9 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGroup){
 	unsigned int lMin_R;
 	//Número de conjuntos
-	for(int i = 0; i < tamVec/tamGroup; i++){
-		lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
+	for(int i = 0; i < tamVec; i++){
+		//lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
+		lMin_R = lMin_s[tamVec]
 		
 		if(*lMax_S < lMin_R){
 			*lMax_S = lMin_R;
