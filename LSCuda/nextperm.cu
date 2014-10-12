@@ -34,7 +34,7 @@ void rotation(int* dest, int* in, int length){
  __device__
  void rotation(int* in, int length){
  	for(int i = 0; i < length-1; i++){
- 		in[length+i] = in[i] 
+ 		in[length+i] = in[i];
  	}
  }
 
