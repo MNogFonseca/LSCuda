@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define NUM_THREADS 512
-#define THREAD_PER_BLOCK 32
+#define THREAD_PER_BLOCK 64
 /*
 #define NUM_SM 8
 #define MAX_THREAD_PER_SM 2048
@@ -122,6 +122,7 @@ void decideLS(int *vector, unsigned int* lMin_R, int length, int numThread, int 
 					lMin_R[tid] = lLIS;	
 				}
 
+				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLIS < lMax_S)
 					return;				
 
@@ -131,10 +132,12 @@ void decideLS(int *vector, unsigned int* lMin_R, int length, int numThread, int 
 					lMin_R[tid] = lLDS;
 				}
 
+				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLDS < lMax_S)
 					return;
 			}
-			//Não fazer duas vezes. PENSAR EM METODO MELHOR
+
+			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
 			if(j == 1)
 				return;
 			else{
