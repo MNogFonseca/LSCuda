@@ -147,33 +147,13 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 			rotation(s_vet + s_index, length);
 		}
 	}
-	__syncthreads();
-	if(tid == 0)
-	for(int i = 0; i < 10; i++){
-		printf("lmin[%d]: %d\n",i,lmin[i]);
-	}
 }
 
-int reduceLMinR(unsigned int* lMin_s, int tam){
-	unsigned int lMin_R = 0xFF;
-	for(int i = 0; i < tam; i++){
-		printf("RLM - %d - %d\n",i, lMin_s[i]);
-		if(lMin_R > lMin_s[i]){
-			lMin_R = lMin_s[i];	
-		}
-	}
-	return lMin_R;
-}
-
-void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGroup){
-	unsigned int lMin_R;
+void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_R, int tamVec, int tamGroup){
 	//Número de conjuntos
 	for(int i = 0; i < tamVec; i++){
-		//lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
-		lMin_R = lMin_s[i];
-		
-		if(*lMax_S < lMin_R){
-			*lMax_S = lMin_R;
+		if(*lMax_S < lMin_R[i]){
+			*lMax_S = lMin_R[i];
 		}
 	}
 
