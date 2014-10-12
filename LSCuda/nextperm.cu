@@ -114,12 +114,19 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
+		if(tid == 0){
+			printf("Entrou");
+		}
 
 		for(i = 0; i < length; i++){
 			lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
 			if(lLIS < lmin[tid]){
 				lmin[tid] = lLIS;	
 			}
+
+			if(tid == 0){
+			printf("Entrou");
+		}
 
 			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
 			if(lLDS < lmin[tid]){
@@ -141,7 +148,7 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 	int i;
 	unsigned int lMin_R = 0xFF;
 	for(i = 0; i < tam; i++){
-		printf("RLM - %d - %d\n",i, lMin_s[i]);
+		//printf("RLM - %d - %d\n",i, lMin_s[i]);
 		if(lMin_R > lMin_s[i]){
 			lMin_R = lMin_s[i];	
 		}
