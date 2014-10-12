@@ -142,7 +142,7 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 	int i;
 	unsigned int lMin_R = 0xFF;
 	for(i = 0; i < tam; i++){
-		printf("%d - %d\n",i, lMin_s[i]);
+		printf("RLM - %d - %d\n",i, lMin_s[i]);
 		if(lMin_R > lMin_s[i]){
 			lMin_R = lMin_s[i];	
 		}
@@ -207,7 +207,6 @@ int main(int argc, char *argv[]){
     //Número de elementos em cada conjunto. length (rotação) * 2 (inversão)    
 	int tamGroup = 2;
 
-
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
@@ -257,6 +256,7 @@ int main(int argc, char *argv[]){
 		
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 		cudaThreadSynchronize();
+
 		printf("Entrou 2\n");
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]){
 	if(numSeqReadyAnt != 0){
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
 		cudaThreadSynchronize();
-		
+
 		printf("Entrou 3\n");
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 	}
