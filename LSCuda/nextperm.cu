@@ -129,7 +129,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 					lmin[tid] = lLIS;	
 				}
 
-				if(lLIS < lMax_S){
+				if(lLIS <= lMax_S){
 					return;
 				}
 
@@ -139,7 +139,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 					lmin[tid] = lLDS;
 				}
 
-				if(lLDS < lMax_S){
+				if(lLDS <= lMax_S){
 					return;
 				}
 			}
@@ -151,7 +151,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 	}
 }
 
-void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_R, int tamVec, int tamGroup){
+void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_R, int tamVec){
 	//Número de conjuntos
 	for(int i = 0; i < tamVec; i++){
 		if(*lMax_S < lMin_R[i]){
@@ -198,10 +198,6 @@ int main(int argc, char *argv[]){
 	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
 	int counter = fatorial(length-1)/2;
-        
-    //Número de elementos em cada conjunto. length (rotação) * 2 (inversão)    
-	int tamGroup = 1;
-
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
@@ -212,7 +208,7 @@ int main(int argc, char *argv[]){
 			           &numSeqReady); //Número de threads prontos
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
-		if((numSeqReady+tamGroup) >= NUM_THREADS){
+		if((numSeqReady) == NUM_THREADS){
 			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
 			
@@ -225,7 +221,7 @@ int main(int argc, char *argv[]){
 					
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
+			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady);	
 			numSeqReady = 0; 
 		}	
 
@@ -246,7 +242,7 @@ int main(int argc, char *argv[]){
 		
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
+		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady);	
 	}
 
 	cudaThreadSynchronize();
