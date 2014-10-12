@@ -171,7 +171,7 @@ int main(int argc, char *argv[]){
 	unsigned int* h_lMin_R;      
 
 	int length = atoi(argv[1]);
-	int NUM_THREADS = atoi(argv[2)
+	int NUM_THREADS = atoi(argv[2);
 	
 	//Tamanho linear da sequência que vai ser enviada para cada thread.
 	//Vetor consisti em Sua sequência seguida por repetição dos seus primeiros length-1 elementos devido a rotação.
