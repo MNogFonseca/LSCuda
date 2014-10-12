@@ -150,7 +150,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				for(int i = 0; i < 2*length-1; i++){
 					printf("%d - ", s_vet[s_index+i]);
 				}
-				printf("\n");
+				printf("\n\n");
 			}
 		}
 	}
