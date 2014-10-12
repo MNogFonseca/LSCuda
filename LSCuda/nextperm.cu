@@ -248,7 +248,7 @@ int main(int argc, char *argv[]){
 		int tam_shared = ((length+1)*(length+1)+(3*length-1))*THREAD_PER_BLOCK*sizeof(int);
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMin_R, length, numSeqReady, lMax_S, step_element, step_shared););
+			       (d_threadSequences, d_lMin_R, length, numSeqReady, lMax_S, step_element, step_shared);
 		
 		cudaMemcpy(h_lMin_R, d_lMin_R, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
