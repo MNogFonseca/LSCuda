@@ -71,17 +71,15 @@ int next_permutation(int *array, size_t length) {
 }
 
 void printVector(int* array, int length){
-	int k;
-	for(k = 0; k < length; k++){
+	for(int k = 0; k < length; k++){
 		printf("%d - ",array[k]);	
 	}
 	printf("\n");
 }
 
 int fatorial(int n){
-	int i;
 	int result = 1;
-	for(i = n; i > 1; i--){
+	for(int i = n; i > 1; i--){
 		result *= i;
 	}
 	return result;
@@ -148,9 +146,8 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 }
 
 int reduceLMinR(unsigned int* lMin_s, int tam){
-	int i;
 	unsigned int lMin_R = 0xFF;
-	for(i = 0; i < tam; i++){
+	for(int i = 0; i < tam; i++){
 		//printf("RLM - %d - %d\n",i, lMin_s[i]);
 		if(lMin_R > lMin_s[i]){
 			lMin_R = lMin_s[i];	
@@ -160,10 +157,9 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 }
 
 void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGroup){
-	int i;
 	unsigned int lMin_R;
 	//Número de conjuntos
-	for(i = 0; i < tamVec/tamGroup; i++){
+	for(int i = 0; i < tamVec/tamGroup; i++){
 		lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
 		
 		if(*lMax_S < lMin_R){
@@ -199,8 +195,7 @@ int main(int argc, char *argv[]){
 	cudaMalloc(&d_lMin_s, sizeof(int)*NUM_THREADS);
 
 	//Gera a sequencia primária, de menor ordem léxica	
-	int i;
-	for(i = 0; i < length; i++)
+	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
 
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
@@ -213,7 +208,7 @@ int main(int argc, char *argv[]){
 	int counter = fatorial(length-1)/2;
         
     //Número de elementos em cada conjunto. length (rotação) * 2 (inversão)    
-	int tamGroup = 2;
+	int tamGroup = 1;
 
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
