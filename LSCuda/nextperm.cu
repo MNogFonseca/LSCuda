@@ -17,20 +17,26 @@
 #define NUM_THREADS 		NUM_BLOCKS*THREAD_PER_BLOCK
 */
 
+__device__
 void inversion(int* dest, int* in, int length){
-	int i;
-	for(i = 0; i < length; i++){
+	for(int i = 0; i < length; i++){
 		dest[i] = in[length-i-1];
 	}
 }
-
+/*
 void rotation(int* dest, int* in, int length){
   int i;	
   dest[0] = in[length-1];
   for (i = 1; i < length; i++)
      dest[i] = in[i-1];
+}*/
 
-}
+ __device__
+ void rotation(int* in, int length){
+ 	for(int i = 0; i < length-1; i++){
+ 		in[length+i] = in[i] 
+ 	}
+ }
 
 int next_permutation(int *array, size_t length) {
 	size_t i, j;
@@ -86,9 +92,10 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	memcpy(dest,in, sizeof(int)*length);
 	memcpy(dest+length,in, sizeof(int)*(length-1));
 
-	inversion(dest+(2*length-1), dest, length);
+	/*inversion(dest+(2*length-1), dest, length);
 	memcpy(dest+(3*length-1),dest+(2*length-1), sizeof(int)*(length-1));
-	*numSeqReady += 2;
+	*numSeqReady += 2;*/
+	(*numSeqReady)++;
 	
 	/*
 	//Rotaciona o pivor, e inverte os elementos produzidos
@@ -107,30 +114,34 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 	int s_step = (length+1)*(length+1) + 3*length -1;
 	int s_index = s_step*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
-		int i;
-		for(i = 0; i < (2*length-1); i++){
+		
+		for(int i = 0; i < (2*length-1); i++){
 			s_vet[s_index+i] = vector[tid*(2*length-1)+i];
 		}
 
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
 
-		for(i = 0; i < length; i++){
-			lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
-			if(lLIS < lmin[tid]){
-				lmin[tid] = lLIS;	
+		for(int j = 0; j < 1; j++){ //Inverção
+			for(int i = 0; i < length; i++){
+				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
+				if(lLIS < lmin[tid]){
+					lmin[tid] = lLIS;	
+				}
+
+				if(lLIS < lMax_S)
+					return;
+
+				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
+				if(lLDS < lmin[tid]){
+					lmin[tid] = lLDS;
+				}
+
+				if(lLDS < lMax_S)
+					return;
 			}
-
-			if(lLIS < lMax_S)
-				return;
-
-			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
-			if(lLDS < lmin[tid]){
-				lmin[tid] = lLDS;
-			}
-
-			if(lLDS < lMax_S)
-				return;
+			inversion(s_vet, s_vet+length-1, length);
+			rotation(s_vet, length);
 		}
 	}
 	
@@ -193,7 +204,6 @@ int main(int argc, char *argv[]){
 		h_sequence[i] = i+1;
 
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
-	unsigned int numSeqReadyAnt = 0;
 
 	start = clock();
 	unsigned int lMax_S = 0;
