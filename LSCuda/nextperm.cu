@@ -222,7 +222,7 @@ int main(int argc, char *argv[]){
 		if(numSeqReadyAnt != 0){
 			//Envia os resultados obtidos para o host
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
-
+			cudaThreadSynchronize();
 			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 		}
 		
