@@ -114,9 +114,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
-		if(threadIdx.x == 0){
-			printf("Entrou - %d- %d\n", tid, blockIdx.x);
-		}
 
 		for(i = 0; i < length; i++){
 			lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
@@ -127,13 +124,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
 			if(lLDS < lmin[tid]){
 				lmin[tid] = lLDS;
-			}
-
-		}
-		__syncthreads();
-		if(tid == 2){
-			for(int i = 0; i < numThread; i++){
-				printf("	%d\n", lmin[i]);
 			}
 		}
 	}
@@ -220,10 +210,8 @@ int main(int argc, char *argv[]){
 
 		if(numSeqReadyAnt != 0){
 			//Envia os resultados obtidos para o host
-			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
-			cudaThreadSynchronize();
-			printf("Entrou 1\n");
+
 			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 		}
 		
@@ -258,16 +246,13 @@ int main(int argc, char *argv[]){
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
 			       (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
 		
-		cudaThreadSynchronize();
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
-		cudaThreadSynchronize();
 
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
 
 	if(numSeqReadyAnt != 0){
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
-		cudaThreadSynchronize();
 		
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 	}
