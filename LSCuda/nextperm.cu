@@ -85,56 +85,56 @@ int fatorial(int n){
 	return result;
 }
 
+//Gera todos os pivores do conjunto R, já inserindo sua rotação
 void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	//Inserir o pivor em primeiro lugar com suas rotações, e sua inversão também com suas rotações	
 	memcpy(dest,in, sizeof(int)*length);
 	memcpy(dest+length,in, sizeof(int)*(length-1));
 
-	/*inversion(dest+(2*length-1), dest, length);
-	memcpy(dest+(3*length-1),dest+(2*length-1), sizeof(int)*(length-1));
-	*numSeqReady += 2;*/
 	(*numSeqReady)++;
-	
-	/*
-	//Rotaciona o pivor, e inverte os elementos produzidos
-	int i;
-	for(i = 1; i < (length); i++, *numSeqReady+=2){
-		rotation(dest + (2*i)*length,dest + (2*i-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
-		inversion(dest + (2*i+1)*length,dest+(2*i)*length, length);		
-	}*/
 }
 
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
-void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lMax_S){
+void decideLS(int *vector, unsigned int* lMin_R, int length, int numThread, int lMax_S, int step_seq, int step_shared){
+	//Step_shared - quantidade de posições utilizada por cada thread
+	//Step_seq - quantidade de posições utilizadas pela sequência
+	//step_last - quantidade de posições utilizado pelo vetor Lasto do LSI/LDS
 	extern __shared__ int s_vet[];
-	int tid = threadIdx.x + blockIdx.x*blockDim.x; 
-	int s_step = (length+1)*(length+1) + 3*length -1;
-	int s_index = s_step*threadIdx.x; //Indice da shared memory
+	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
+	int s_index = step_shared*threadIdx.x; //Indice da shared memory
+	int step_last = length;
 	if(tid < numThread){
 		
-		for(int i = 0; i < (2*length-1); i++){
-			s_vet[s_index+i] = vector[tid*(2*length-1)+i];
+		for(int i = 0; i < step_seq; i++){
+			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
 
 		unsigned int lLIS, lLDS; 
-		lmin[tid] = 1000;
+		lMin_R[tid] = 1000;
 
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
 
-				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
-				if(lLIS < lmin[tid]){
+				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
+				if(lLIS < lMin_R[tid]){
 					
-					lmin[tid] = lLIS;	
-				}				
-
-				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
-				if(lLDS < lmin[tid]){
-					
-					lmin[tid] = lLDS;
+					lMin_R[tid] = lLIS;	
 				}
+
+				if(lLIS < lMax_S)
+					return;				
+
+				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
+				if(lLDS < lMin_R[tid]){
+					
+					lMin_R[tid] = lLDS;
+				}
+
+				if(lLDS < lMax_S)
+					return;
 			}
+			//Não fazer duas vezes. PENSAR EM METODO MELHOR
 			if(j == 1)
 				return;
 			else{
@@ -160,62 +160,75 @@ void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_R, int tamVec){
 //Defina LIS(s) e LDS(s) como você sabe e sejam |LIS(s)| e |LDS(s)| suas
 //cardinalidades.
 //Determinar Max_{s \in S}(Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)))
-
-
 int main(int argc, char *argv[]){
 	int* h_sequence;            //Vetor com a sequência pivor do grupo
 	int* h_threadSequences;      //Vetor com as sequências criadas
 	int* d_threadSequences;	    //Sequências produzidas para enviar para o device
-	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
-	unsigned int* h_lMin_s;      
+	unsigned int* d_lMin_R;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
+	unsigned int* h_lMin_R;      
 
 	int length = atoi(argv[1]);
+	
+	//Tamanho linear da sequência que vai ser enviada para cada thread.
+	//Vetor consisti em Sua sequência seguida por repetição dos seus primeiros length-1 elementos devido a rotação.
+	//Ex: 1 2 3 4 1 2 3.
+	int step_element = 2*length-1; 
+
+	//Tamanho linear de cada thread da Shared Memory, composto por:
+	//Vetor MR[N+1]*[N+1] com as sequência LIS e LDS mais promissoras
+	//Vetor Last[N] com o tamanho do ultimo valor de cada sequência promissora
+	//Sequência geradas de tamanho step_element
+	int step_shared = (length+1)*(length+1)+length+step_element;
 
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
 	h_sequence = (int*) malloc(sizeof(int)*length);
-	h_threadSequences = (int*) malloc(sizeof(int)*(2*length-1)*NUM_THREADS);
-	h_lMin_s = (unsigned int*) malloc(sizeof(unsigned int)*NUM_THREADS);
-	cudaMalloc(&d_threadSequences, sizeof(int)*(2*length-1)*NUM_THREADS);
-	cudaMalloc(&d_lMin_s, sizeof(int)*NUM_THREADS);
+	h_threadSequences = (int*) malloc(sizeof(int)*step_element*NUM_THREADS);
+	h_lMin_R = (unsigned int*) malloc(sizeof(unsigned int)*NUM_THREADS);
+	cudaMalloc(&d_threadSequences, sizeof(int)*step_element*NUM_THREADS);
+	cudaMalloc(&d_lMin_R, sizeof(int)*NUM_THREADS);
 
-	//Gera a sequencia primária, de menor ordem léxica	
+	//Gera a sequência primária, de menor ordem léxica	
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
 
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
+	unsigned int lMax_S = 0; //Resultado final, maior valor encontrado do grupo S
 
 	start = clock();
-	unsigned int lMax_S = 0;
+	
+	next_permutation(h_sequence+1,length-1); //Remover a primeira sequência, pois o resultado é sempre 1
 
 	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
-	//Dividido por 2, porque a inversão cobre metade do conjunto.
-	int counter = fatorial(length-1)/2;
+	//Dividido por 2, porque a inversão cobre metade do conjunto. E -1 devido a remoção da primeira sequência
+	int counter = fatorial(length-1)/2 -1;
+
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
-		//Gera todo o conjunto R
-		criaSequencias(h_threadSequences + numSeqReady*(2*length-1), //Vetor com as sequências geradas
+		//Gera todos os pivores do conjunto R
+		criaSequencias(h_threadSequences + numSeqReady*step_element, //Movimentar o vetor de sequências geradas para a posição correta
 		    		   h_sequence, //Vetor pivor
                        length,
 			           &numSeqReady); //Número de threads prontos
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
-		if((numSeqReady) == NUM_THREADS){
-			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
+		if(numSeqReady == NUM_THREADS){
+			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*step_element, cudaMemcpyHostToDevice);
 			
-			
-			//Cada thread calcula o LIS e o LDS de cada sequência
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = ((length+1)*(length+1)+3*length-1)*THREAD_PER_BLOCK*sizeof(int);
+			int tam_shared = step_shared*THREAD_PER_BLOCK*sizeof(int);
 			
+			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
+					   (d_threadSequences, d_lMin_R, length, numSeqReady, lMax_S, step_element, step_shared);
 					
-			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
+			cudaMemcpy(h_lMin_R, d_lMin_R, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady);	
+			//Faz uma redução com de lMin_R, encontrando lMax_S
+			calcLMaxS(&lMax_S, h_lMin_R, numSeqReady);	
+			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
 
@@ -224,19 +237,19 @@ int main(int argc, char *argv[]){
 		counter--;
 	}
 
+	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
 	if(numSeqReady != 0){
 		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
-		//Cada thread calcula o LIS e o LDS de cada sequência
 		dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 		int tam_shared = ((length+1)*(length+1)+(3*length-1))*THREAD_PER_BLOCK*sizeof(int);
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
+			       (d_threadSequences, d_lMin_R, length, numSeqReady, lMax_S, step_element, step_shared););
 		
-		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
+		cudaMemcpy(h_lMin_R, d_lMin_R, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
-		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady);	
+		calcLMaxS(&lMax_S, h_lMin_R, numSeqReady);	
 	}
 
 	cudaThreadSynchronize();
@@ -248,7 +261,7 @@ int main(int argc, char *argv[]){
 
 	free(h_sequence);
 	free(h_threadSequences);
-	free(h_lMin_s);
+	free(h_lMin_R);
 	cudaFree(d_threadSequences);
-	cudaFree(d_lMin_s);
+	cudaFree(d_lMin_R);
 }
