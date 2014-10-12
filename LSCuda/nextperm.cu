@@ -130,7 +130,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				}
 
 				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
-				printf("1:%d\n",lLIS);
 				if(lLIS < lmin[tid]){
 					
 					lmin[tid] = lLIS;	
@@ -141,7 +140,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				}
 
 				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
-				printf("2:%d\n",lLIS);
 				if(lLDS < lmin[tid]){
 					
 					lmin[tid] = lLDS;
@@ -153,10 +151,13 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 			}
 			inversion(s_vet + s_index, s_vet + s_index + length -1, length);
 			rotation(s_vet + s_index, length);
-			
 		}
 	}
-	
+	__syncthreads();
+	if(tid == 0)
+	for(int i = 0; i < 10; i++){
+		printf("lmin[%d]: %d\n",i,lmin[i]);
+	}
 }
 
 int reduceLMinR(unsigned int* lMin_s, int tam){
