@@ -120,7 +120,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
 
-		for(int j = 0; j < 1; j++){ //Inverção
+		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
 				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
 				if(lLIS < lmin[tid]){
