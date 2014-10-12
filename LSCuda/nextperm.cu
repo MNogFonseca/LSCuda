@@ -127,26 +127,20 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				if(lLIS < lmin[tid]){
 					
 					lmin[tid] = lLIS;	
-				}
-
-				if(lLIS <= lMax_S){
-					return;
-				}
+				}				
 
 				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
 				if(lLDS < lmin[tid]){
 					
 					lmin[tid] = lLDS;
 				}
-
-				if(lLDS <= lMax_S){
-					return;
-				}
 			}
-			if(j)
+			if(j == 1)
 				return;
-			inversion(s_vet + s_index, s_vet + s_index + length -1, length);
-			rotation(s_vet + s_index, length);
+			else{
+				inversion(s_vet + s_index, s_vet + s_index + length -1, length);
+				rotation(s_vet + s_index, length);
+			}
 		}
 	}
 }
