@@ -231,6 +231,7 @@ int main(int argc, char *argv[]){
 
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
+			cudaThreadSynchronize();
 			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);
 
 			numSeqReady = 0; 
@@ -242,6 +243,7 @@ int main(int argc, char *argv[]){
 	}
 
 	if(numSeqReady != 0){
+		printf("Entrou\n", );
 		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
 		//Cada thread calcula o LIS e o LDS de cada sequência
