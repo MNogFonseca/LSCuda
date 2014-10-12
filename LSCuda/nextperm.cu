@@ -115,7 +115,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
 		if(threadIdx.x == 0){
-			printf("Entrou - %d", tid);
+			printf("Entrou - %d\n", tid, blockIdx.x);
 		}
 
 		for(i = 0; i < length; i++){
