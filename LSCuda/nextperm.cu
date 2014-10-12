@@ -114,7 +114,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 
 		unsigned int lLIS, lLDS; 
 		lmin[tid] = 1000;
-		if(tid == 0){
+		if(threadIdx.x == 0){
 			printf("Entrou");
 		}
 
@@ -124,7 +124,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				lmin[tid] = lLIS;	
 			}
 
-			if(tid == 0){
+			if(tid == 6){
 			printf("Entrou");
 		}
 
@@ -135,7 +135,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 
 		}
 		__syncthreads();
-		if(tid == 0){
+		if(tid == 2){
 			for(int i = 0; i < numThread; i++){
 				printf("	%d\n", lmin[i]);
 			}
