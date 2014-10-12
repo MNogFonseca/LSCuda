@@ -122,7 +122,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 			}
 
 			if(lMax_S > lLIS){
-				printf("%d\n",lmin[tid]);
 				return;
 			}
 			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
@@ -131,12 +130,10 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 			}
 
 			if(lMax_S > lLDS){
-				printf("%d\n",lmin[tid]);
 				return;
 			}
 
 		}
-		printf("%d\n",lmin[tid]);
 	}
 	
 }
@@ -258,12 +255,12 @@ int main(int argc, char *argv[]){
 			       (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
 		
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
-
+		cudaThreadSynchronize();
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
 	if(numSeqReadyAnt != 0){
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
-
+		cudaThreadSynchronize();
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 	}
 
