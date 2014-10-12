@@ -144,7 +144,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				}
 				printf("\n");
 			}
-			inversion(s_vet + s_index, s_vet + s_index + length-1, length);
+			inversion(s_vet + s_index, s_vet + s_index + length, length);
 			rotation(s_vet + s_index, length);
 			if(tid == 0){
 				for(int i = 0; i < 2*length-1; i++){
