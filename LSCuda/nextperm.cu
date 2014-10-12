@@ -90,7 +90,7 @@ void criaSequencias(int* dest, int* in,int length, unsigned int* numSeqReady){
 	memcpy(dest+(3*length-1),dest+(2*length-1), sizeof(int)*(length-1));
 	*numSeqReady += 2;
 
-	if(numSeqReady == 8){
+	if(*numSeqReady == 8){
 		printVector(dest,2*length-1);
 	}
 	
