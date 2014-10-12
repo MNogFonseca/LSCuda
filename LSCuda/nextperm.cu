@@ -218,6 +218,7 @@ int main(int argc, char *argv[]){
 
 		if(numSeqReadyAnt != 0){
 			//Envia os resultados obtidos para o host
+			cudaThreadSynchronize();
 			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
 			cudaThreadSynchronize();
 			printf("Entrou 1\n");
@@ -254,18 +255,17 @@ int main(int argc, char *argv[]){
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
 			       (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
 		
+		cudaThreadSynchronize();
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 		cudaThreadSynchronize();
 
-		printf("Entrou 2 - %d\n", d_lMin_s[6]);
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
 	}
 
 	if(numSeqReadyAnt != 0){
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
 		cudaThreadSynchronize();
-
-		printf("Entrou 3\n");
+		
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 	}
 
