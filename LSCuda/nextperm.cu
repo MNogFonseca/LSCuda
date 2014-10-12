@@ -117,7 +117,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 
 		for(i = 0; i < length; i++){
 			lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
-			printf("%d - %d\n",tid, lLIS);
 			if(lLIS < lmin[tid]){
 				lmin[tid] = lLIS;	
 			}
@@ -126,7 +125,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 				return;
 			}
 			lLDS = LDS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);;	
-			printf("%d - %d\n",tid, lLDS);
 			if(lLDS < lmin[tid]){
 				lmin[tid] = lLDS;	
 			}
@@ -146,6 +144,7 @@ int reduceLMinR(unsigned int* lMin_s, int tam){
 	int i;
 	unsigned int lMin_R = 0xFF;
 	for(i = 0; i < tam; i++){
+		printf("%d - %d\n",i, lMin_s[i]);
 		if(lMin_R > lMin_s[i]){
 			lMin_R = lMin_s[i];	
 		}
@@ -159,7 +158,7 @@ void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGr
 	//Número de conjuntos
 	for(i = 0; i < tamVec/tamGroup; i++){
 		lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
-		printf("%d\n", lMin_R);
+		
 		if(*lMax_S < lMin_R){
 			*lMax_S = lMin_R;
 		}
