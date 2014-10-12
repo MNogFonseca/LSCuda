@@ -134,6 +134,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 			if(lMax_S > lLDS){
 				return;
 			}
+
 		}
 		
 		
@@ -217,6 +218,13 @@ int main(int argc, char *argv[]){
 		    		   h_sequence, //Vetor pivor
                        length,
 			           &numSeqReady); //Número de threads prontos
+
+		if(numSeqReadyAnt != 0){
+			//Envia os resultados obtidos para o host
+			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
+
+			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
+		}
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if((numSeqReady+tamGroup) >= NUM_THREADS){
@@ -227,13 +235,9 @@ int main(int argc, char *argv[]){
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = ((length+1)*(length+1)+3*length-1)*THREAD_PER_BLOCK*sizeof(int);
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
-
-			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
-
-			cudaThreadSynchronize();
-			calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);
-
+					   (d_threadSequences, d_lMin_s, length, numSeqReady);
+			
+			numSeqReadyAnt = numSeqReady;
 			numSeqReady = 0; 
 		}	
 
@@ -243,7 +247,6 @@ int main(int argc, char *argv[]){
 	}
 
 	if(numSeqReady != 0){
-		printf("Entrou\n");
 		cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
 			
 		//Cada thread calcula o LIS e o LDS de cada sequência
@@ -251,11 +254,16 @@ int main(int argc, char *argv[]){
 		int tam_shared = ((length+1)*(length+1)+2*length)*THREAD_PER_BLOCK*sizeof(int);
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMin_s, length, numSeqReady, lMax_S);
+			       (d_threadSequences, d_lMin_s, length, numSeqReady);
 		
 		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
 
 		calcLMaxS(&lMax_S, h_lMin_s, numSeqReady, tamGroup);	
+	}
+	if(numSeqReadyAnt != 0){
+		cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReadyAnt, cudaMemcpyDeviceToHost);
+
+		calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
 	}
 
 	cudaThreadSynchronize();
