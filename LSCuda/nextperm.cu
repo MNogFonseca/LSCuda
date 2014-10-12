@@ -122,12 +122,6 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
-				if(tid == 0){
-					for(int k = 0; k < length; k++){
-						printf("%d - ", s_vet[s_index+i+k]);
-					}
-					printf("\n");	
-				}
 
 				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + (2*length-1), s_vet + s_index + (3*length-1), length);
 				if(lLIS < lmin[tid]){
@@ -163,7 +157,7 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 int reduceLMinR(unsigned int* lMin_s, int tam){
 	unsigned int lMin_R = 0xFF;
 	for(int i = 0; i < tam; i++){
-		//printf("RLM - %d - %d\n",i, lMin_s[i]);
+		printf("RLM - %d - %d\n",i, lMin_s[i]);
 		if(lMin_R > lMin_s[i]){
 			lMin_R = lMin_s[i];	
 		}
