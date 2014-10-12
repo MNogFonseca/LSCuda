@@ -159,6 +159,7 @@ void calcLMaxS(unsigned int* lMax_S, unsigned int* lMin_s, int tamVec, int tamGr
 	//Número de conjuntos
 	for(i = 0; i < tamVec/tamGroup; i++){
 		lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
+		printf("%d\n", lMin_R);
 		if(*lMax_S < lMin_R){
 			*lMax_S = lMin_R;
 		}
