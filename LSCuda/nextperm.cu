@@ -143,6 +143,8 @@ void decideLS(int *vector, unsigned int* lmin, int length, int numThread, int lM
 					return;
 				}
 			}
+			if(j)
+				return;
 			inversion(s_vet + s_index, s_vet + s_index + length -1, length);
 			rotation(s_vet + s_index, length);
 		}
