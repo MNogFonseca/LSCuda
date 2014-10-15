@@ -229,9 +229,9 @@ int main(int argc, char *argv[]){
 					   (d_threadSequences, d_lMin_R, length, numSeqReady, lMax_S, step_element, step_shared);
 					
 			cudaMemcpy(h_lMin_R, d_lMin_R, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
-
+			cudaThreadSynchronize();
 			//Faz uma redução com de lMin_R, encontrando lMax_S
-			calcLMaxS(&lMax_S, h_lMin_R, numSeqReady);	
+			calcLMaxS(&lMax_S, h_lMin_R, numSeqReady);	//DEPOIS FAZER ISSO NO KERNEL, VAI REMOVER O MEMCPY ANTERIOR
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
@@ -242,7 +242,7 @@ int main(int argc, char *argv[]){
 
 		if((counterMax - counter)%(counterMax/100) == 0){
 			end = clock();
-			printf("%d%% - Tempo: %f s\n",(counterMax - counter)/(counterMax/100), (float)(end-start)/CLOCKS_PER_SEC);
+			printf("%d%% - Tempo: %f s  - %d\n",(counterMax - counter)/(counterMax/100), (float)(end-start)/CLOCKS_PER_SEC, lMax_S);
 		}
 	}
 
