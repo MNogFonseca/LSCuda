@@ -207,7 +207,7 @@ int main(int argc, char *argv[]){
 	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto. E -1 devido a remoção da primeira sequência
 	int counter = fatorial(length-1)/2 -1;
-
+	int counterMax = counter;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
@@ -239,6 +239,11 @@ int main(int argc, char *argv[]){
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
 		counter--;
+
+		if((counterMax - counter)%(counterMax/100) == 0){
+			end = clock();
+			printf("%d%% - Tempo: %f s\n",(counterMax - counter)/(counterMax/100), (float)(end-start)/CLOCKS_PER_SEC);
+		}
 	}
 
 	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
@@ -259,7 +264,7 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();
 	end = clock();
 
-	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
+	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
 
 	printf("Lmax R = %d\n",lMax_S);
 
