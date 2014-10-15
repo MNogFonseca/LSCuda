@@ -123,7 +123,7 @@ void decideLS(int *vector, unsigned int* lMin_R, int length, int numThread, int 
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLIS < lMax_S)
+				if(lLIS <= lMax_S)
 					return;				
 
 				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
@@ -133,7 +133,7 @@ void decideLS(int *vector, unsigned int* lMin_R, int length, int numThread, int 
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLDS < lMax_S)
+				if(lLDS <= lMax_S)
 					return;
 			}
 
