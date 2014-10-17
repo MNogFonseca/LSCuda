@@ -5,7 +5,7 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 10
+#define THREAD_PER_BLOCK 3
 /*
 #define NUM_SM 8
 #define MAX_THREAD_PER_SM 2048
@@ -167,6 +167,8 @@ int main(int argc, char *argv[]){
 
 	int length = atoi(argv[1]);
 	int NUM_THREADS = atoi(argv[2]);
+
+	 cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 	
 	//Tamanho linear da sequência que vai ser enviada para cada thread.
 	//Vetor consisti em Sua sequência seguida por repetição dos seus primeiros length-1 elementos devido a rotação.
