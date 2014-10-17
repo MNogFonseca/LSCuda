@@ -168,6 +168,7 @@ int main(int argc, char *argv[]){
 	int length = atoi(argv[1]);
 	int NUM_THREADS = atoi(argv[2]);
 
+	cudaDeviceSharedMemConfig(cudaSharedMemBankSizeEightByte);
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 	
 	//Tamanho linear da sequência que vai ser enviada para cada thread.
