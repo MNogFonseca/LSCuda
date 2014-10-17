@@ -5,6 +5,7 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
+#define TAMANHO 14
 #define THREAD_PER_BLOCK 10
 /*
 #define NUM_SM 8
@@ -164,7 +165,7 @@ int main(int argc, char *argv[]){
 	char* d_lMin_R;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	char* h_lMin_R;      
 
-	int length = atoi(argv[1]);
+	int length =TAMANHO;
 	int NUM_THREADS = atoi(argv[2]);
 	
 	//Tamanho linear da sequência que vai ser enviada para cada thread.
