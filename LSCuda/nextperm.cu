@@ -82,7 +82,6 @@ unsigned long fatorial(unsigned long n){
 	unsigned long result = 1;
 	for(i = n; i > 1; i--){
 		result *= i;
-		printf("%d")
 	}
 	return result;
 }
