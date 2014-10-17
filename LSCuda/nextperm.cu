@@ -5,7 +5,7 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 2
+#define THREAD_PER_BLOCK 10
 /*
 #define NUM_SM 8
 #define MAX_THREAD_PER_SM 2048
@@ -236,7 +236,7 @@ int main(int argc, char *argv[]){
 
 		if((counterMax - counter)%(counterMax/100) == 0){
 			end = clock();
-			printf("%d%% - Tempo: %f s  - Lmax S %d - Counter: %lu\n",(int)((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, lMax_S, counter);
+			printf("%lu%% - Tempo: %f s  - Lmax S %d - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, lMax_S, counter);
 		}
 	}
 
