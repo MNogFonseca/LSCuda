@@ -217,7 +217,7 @@ int main(int argc, char *argv[]){
 			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*step_element, cudaMemcpyHostToDevice);
 			
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = step_shared*THREAD_PER_BLOCK*sizeof(int);
+			int tam_shared = step_shared*THREAD_PER_BLOCK;
 			
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
