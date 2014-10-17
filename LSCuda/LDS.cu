@@ -3,20 +3,20 @@
 
 //pega o menor valor do vetor last que seja maior do que x
 __device__
-int LDSgetLast(int* last,int x,int tam){
+char LDSgetLast(char* last,int x,int tam){
 	int i;
 	for(i=0; i < tam ;i++){
 		if(last[i] < x ){
 			return i+1;
 		}		
 	}
-
-	return -1;
+	//Nunca deve chegar aqui
+	return 0;
 }
 
 //pega a posicao valida para inserir um elemento no vetor vet
 __device__
-int LDSgetPos(int vet[],int tam){
+int LDSgetPos(char vet[],int tam){
 	int i;
 	for(i =0;i < tam;i++){
 
@@ -29,7 +29,7 @@ int LDSgetPos(int vet[],int tam){
 
 //copia um vetor para outro
 __device__
-void LDSVetCopy(int* dest, int* in,int tam){
+void LDSVetCopy(char* dest, char* in,int tam){
 	int i;
 	for(i = 0; i<tam;i++){
 		dest[i] = in[i];
@@ -37,14 +37,14 @@ void LDSVetCopy(int* dest, int* in,int tam){
 }
 
 __device__
-unsigned int LDS(int* vet, int* last, int* MP, int tam){	
+unsigned char LDS(char* vet, char* last, char* MP, int tam){	
 	//inicializa o vetor com os ultimos elementos de MP
 	int i;											 
 	for(i =0;i<tam;i++){
 		last[i] = 0;
 	}
 	
-	int lmax = 1;  //maior tamanho de subsequencia
+	char lmax = 1;  //maior tamanho de subsequencia
 
 	for(i = 0;i<tam; i++){
 		int j;
@@ -60,7 +60,7 @@ unsigned int LDS(int* vet, int* last, int* MP, int tam){
 
 	for(i=1; i < tam; i++){
 
-		int l = LDSgetLast(last,vet[i],tam); //pega  valor de l
+		char l = LDSgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
 		if(l > lmax){ 
