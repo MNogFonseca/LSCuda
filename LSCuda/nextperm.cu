@@ -206,8 +206,8 @@ int main(int argc, char *argv[]){
 
 	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto. E -1 devido a remoção da primeira sequência
-	int counter = fatorial(length-1)/2 -1;
-	int counterMax = counter;
+	unsigned long counter = fatorial(length-1)/2 -1;
+	unsigned long counterMax = counter;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		
@@ -242,7 +242,7 @@ int main(int argc, char *argv[]){
 
 		if((counterMax - counter)%(counterMax/100) == 0){
 			end = clock();
-			printf("%d%% - Tempo: %f s  - %d\n",(counterMax - counter)/(counterMax/100), (float)(end-start)/CLOCKS_PER_SEC, lMax_S)	;
+			printf("%d%% - Tempo: %f s  - Lmax S %d - Counter: %lu\n",(counterMax - counter)/(counterMax/100), (float)(end-start)/CLOCKS_PER_SEC, lMax_S, counter)	;
 		}
 	}
 
