@@ -167,7 +167,7 @@ int main(int argc, char *argv[]){
 
 	int length = atoi(argv[1]);
 	int NUM_THREADS = atoi(argv[2]);
-	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
+	//cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 		
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
 	
