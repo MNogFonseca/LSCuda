@@ -243,7 +243,7 @@ int main(int argc, char *argv[]){
 
 		if((counterMax - counter)%(counterMax/100) == 0){
 			end = clock();
-			printf("%d%% - Tempo: %f s  - Lmax S %d - Counter: %lu\n",(int)(counterMax - counter)/(counterMax/100), (float)(end-start)/CLOCKS_PER_SEC, lMax_S, counter);
+			printf("%d%% - Tempo: %f s  - Lmax S %d - Counter: %lu\n",(int)((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, lMax_S, counter);
 		}
 	}
 
