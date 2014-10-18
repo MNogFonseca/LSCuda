@@ -7,6 +7,7 @@
 #include "LIS.c"
 #include "LDS.c"
 #include <time.h>
+#include "EnumaratorSequence.cu"
 
 
 void inversion(int *array, int length){
@@ -60,19 +61,10 @@ int next_permutation(int *array, size_t length) {
 
 void printVector(int* array, int length){
 	int k;
-	for(k = 0; k < 4; k++){
-		//printf("%d - ",array[k]);	
+	for(k = 0; k < length; k++){
+		printf("%d - ",array[k]);	
 	}
-	//printf("\n");
-}
-
-int fatorial(int n){
-	int i;
-	int result = 1;
-	for(i = n; i > 1; i--){
-		result *= i;
-	}
-	return result;
+	printf("\n");
 }
 
 //Min(|LIS(s)|, |LDS(s)|)
@@ -110,9 +102,13 @@ int main(int argc, char* argv[]){
 	int* vecRotation;
 	int* vecInversion;	
 	int length = atoi(argv[1]);
-	printf("%d\n",length);
+	int lR_expected = atoi(argv[2]);
+	int num_expected = 0;
 	clock_t start,end;
 
+	printf("%lu\n", sizeof(int));
+	printf("%lu\n", sizeof(long));
+	printf("%lu\n", sizeof(long long));
 	
 	vector = (int*) malloc(sizeof(int)*length);
 	vecRotation = (int*) malloc(sizeof(int)*length);
@@ -136,29 +132,34 @@ int main(int argc, char* argv[]){
 		unsigned int lminR = length;	
 		//printf("Permutação: ");
 		//printVector(vector,length);
-		//decideLS(vector, length, &lminR);
+		decideLS(vector, length, &lminR);
 
 		memcpy(vecInversion,vector, sizeof(int)*length);
 		inversion(vecInversion, length);
 		//printf("Inversão: ");
 		//printVector(vecInversion,length);
-		//decideLS(vecInversion, length, &lminR);
+		decideLS(vecInversion, length, &lminR);
 
 		memcpy(vecRotation,vector, sizeof(int)*length);
 		for(i = 0; i < length-1; i++){
 			rotation(vecRotation, length);
 			//printf("Rotações: ");
 			//printVector(vecRotation, length);
-			//decideLS(vecRotation, length, &lminR);
+			decideLS(vecRotation, length, &lminR);
 
 
 			memcpy(vecInversion,vecRotation, sizeof(int)*length);
 			inversion(vecInversion, length);
 			//printf("Inversão: ");
 			//printVector(vecInversion,length);
-			//decideLS(vecInversion, length, &lminR);
+			decideLS(vecInversion, length, &lminR);
 		}
-		
+
+		if(lminR == lR_expected){
+			num_expected++;
+			printf("Id: %d ---", getIndex(vector,length));
+			printVector(vector, length);
+		}
 		//Define o maior valor encontrado entre os elementos de S
 		if(lmaxS < lminR){
 			lmaxS = lminR;
@@ -169,7 +170,7 @@ int main(int argc, char* argv[]){
 		counter--;
 	}
 	end = clock();
-
+	printf("Número encontrado: %d\n",num_expected);
 	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
 	printf("Lmax R = %d\n",lmaxS);
 	free(vector);
