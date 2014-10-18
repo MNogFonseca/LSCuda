@@ -6,16 +6,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 10
-/*
-#define NUM_SM 8
-#define MAX_THREAD_PER_SM 2048
-#define length 10
-#define MAX_SHARED_PER_BLOCK 49152
-#define SHARED_PER_THREAD 	(length*length+length)
-#define THREAD_PER_BLOCK 	MAX_SHARED_PER_BLOCK/SHARED_PER_THREAD
-#define NUM_BLOCKS 			(THREAD_PER_SM*NUM_SM)/THREAD_PER_BLOCK
-#define NUM_THREADS 		NUM_BLOCKS*THREAD_PER_BLOCK
-*/
+#define N 15
 
 __device__
 void inversion(char* dest, char* in, int length){
@@ -90,19 +81,21 @@ void criaSequencias(char* dest, char* in, int length, unsigned int* numSeqReady)
 
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
-void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_seq, int step_shared){
+void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_seq){
 	//Step_shared - quantidade de posições utilizada por cada thread
 	//Step_seq - quantidade de posições utilizadas pela sequência
 	//step_last - quantidade de posições utilizado pelo vetor Lasto do LSI/LDS
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
-	int s_index = step_shared*threadIdx.x; //Indice da shared memory
-	int step_last = length;
+	int s_index = step_seq*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
 		
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
+
+		char MP[(N+1)*(N+1)];
+		char last[N];
 
 		char lLIS, lLDS; 
 		char lMin_R = 127;
@@ -110,7 +103,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
 
-				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
+				lLIS = LIS(s_vet + s_index + i, last, MP, length);
 				if(lLIS < lMin_R){
 					
 					lMin_R = lLIS;	
@@ -120,7 +113,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				if(lLIS <= d_lMax_S[tid])
 					return;				
 
-				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
+				lLDS = LDS(s_vet + s_index + i, last, MP, length);
 				if(lLDS < lMin_R){
 					
 					lMin_R = lLDS;
@@ -165,8 +158,8 @@ int main(int argc, char *argv[]){
 	char* d_lMax_S;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
 	char* h_lMax_S;      
 
-	int length = atoi(argv[1]);
-	int NUM_THREADS = atoi(argv[2]);
+	int length = N;
+	int NUM_THREADS = atoi(argv[1]);
 	//cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 		
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
@@ -180,7 +173,6 @@ int main(int argc, char *argv[]){
 	//Vetor MR[N+1]*[N+1] com as sequência LIS e LDS mais promissoras
 	//Vetor Last[N] com o tamanho do ultimo valor de cada sequência promissora
 	//Sequência geradas de tamanho step_element
-	int step_shared = (length+1)*(length+1)+length+step_element;
 
 	clock_t start,end;
 
@@ -220,11 +212,11 @@ int main(int argc, char *argv[]){
 			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*step_element, cudaMemcpyHostToDevice);
 			
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = step_shared*THREAD_PER_BLOCK;
+			int tam_shared = step_element*THREAD_PER_BLOCK;
 			
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element, step_shared);
+					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
 					
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
@@ -248,7 +240,7 @@ int main(int argc, char *argv[]){
 		int tam_shared = ((length+1)*(length+1)+(3*length-1))*THREAD_PER_BLOCK*sizeof(int);
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMax_S, length, numSeqReady, step_element, step_shared);
+			       (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
 		
 	}
 
@@ -269,60 +261,3 @@ int main(int argc, char *argv[]){
 	cudaFree(d_threadSequences);
 	cudaFree(d_lMax_S);
 }
-
-
-/*
-//Min(|LIS(s)|, |LDS(s)|)
-__global__
-void decideLS(char *vector, char* lMin_R, int length, int numThread, char lMax_S, int step_seq, int step_shared){
-	//Step_shared - quantidade de posições utilizada por cada thread
-	//Step_seq - quantidade de posições utilizadas pela sequência
-	//step_last - quantidade de posições utilizado pelo vetor Lasto do LSI/LDS
-	extern __shared__ char s_vet[];
-	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
-	int s_index = step_shared*threadIdx.x; //Indice da shared memory
-	int step_last = length;
-	if(tid < numThread){
-		
-		for(int i = 0; i < step_seq; i++){
-			s_vet[s_index+i] = vector[tid*step_seq+i];
-		}
-
-		char lLIS, lLDS; 
-		lMin_R[tid] = 127;
-
-		for(int j = 0; j < 2; j++){ //Inverção
-			for(int i = 0; i < length; i++){
-
-				lLIS = LIS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
-				if(lLIS < lMin_R[tid]){
-					
-					lMin_R[tid] = lLIS;	
-				}
-
-				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLIS <= lMax_S)
-					return;				
-
-				lLDS = LDS(s_vet + s_index + i, s_vet + s_index + step_seq, s_vet + s_index + step_seq + step_last, length);
-				if(lLDS < lMin_R[tid]){
-					
-					lMin_R[tid] = lLDS;
-				}
-
-				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLDS <= lMax_S)
-					return;
-			}
-
-			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
-			if(j == 1)
-				return;
-			else{
-				inversion(s_vet + s_index, s_vet + s_index + length -1, length);
-				rotation(s_vet + s_index, length);
-			}
-		}
-	}
-}
-*/
