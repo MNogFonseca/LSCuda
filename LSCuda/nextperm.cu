@@ -5,7 +5,7 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 10
+#define THREAD_PER_BLOCK 128
 #define N 13
 
 __device__
