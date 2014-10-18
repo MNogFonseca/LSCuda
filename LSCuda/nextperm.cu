@@ -174,7 +174,7 @@ int main(int argc, char *argv[]){
 	//Vetor MR[N+1]*[N+1] com as sequência LIS e LDS mais promissoras
 	//Vetor Last[N] com o tamanho do ultimo valor de cada sequência promissora
 	//Sequência geradas de tamanho step_element
-
+	printf("Shared: %d\n", step_element*THREAD_PER_BLOCK);
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
