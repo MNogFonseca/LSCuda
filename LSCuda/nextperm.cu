@@ -12,7 +12,7 @@
 __device__
 void inversion(char* vet, int length){
 	char temp;
-	for(int i = 0; i < floor(length); i++){
+	for(int i = 0; i < length; i++){
 		temp = vet[length-i-1];
 		vet[length-i-1] = vet[i];
 		vet[i] = temp;
