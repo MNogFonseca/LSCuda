@@ -115,6 +115,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			for(int i = 0; i < length; i++){
 
 				lLIS = LIS(s_vet + s_index + i, last, MP, length);
+				printf("%d - %d\n",lMin_R, lLIS);
 				if(lLIS < lMin_R){
 					
 					lMin_R = lLIS;	
