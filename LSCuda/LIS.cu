@@ -29,7 +29,7 @@ int LISgetPos(char vet[],int tam){
 
 //copia um vetor para outro
 __device__
-void LISVetCopy(int* dest, int* in,int tam){
+void LISVetCopy(char* dest, char* in,int tam){
 	for(int i = 0; i<tam-1;i++){
 		dest[i] = in[i];
 	}
@@ -46,7 +46,7 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 	
 	char lmax = 1;  //maior tamanho de subsequencia
 	
-	for(i = 0;i<tam; i++){
+	for(int i = 0;i<tam; i++){
 		int j;
 		for(j = 0;j<tam; j++){
 			
