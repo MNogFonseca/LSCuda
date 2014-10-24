@@ -8,7 +8,7 @@
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
 #define N 10
-#define TAM_MP N*(N+1)/2
+
 __device__
 void inversion(char* vet, int length){
 	char temp;
@@ -100,8 +100,8 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
-		printf("Entrou\n");
-		char MP[TAM_MP];
+		
+		char MP[N*(N+1)/2];
 		char last[N];
 
 		char lLIS, lLDS; 
@@ -109,8 +109,9 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
-
+				printf("Entrou\n");
 				lLIS = LIS(s_vet + s_index + i, last, MP, length);
+				printf("Saiu\n");
 				if(threadIdx.x == 0){
 					printf("%d - %d   --",lMin_R, lLIS);
 					printVector(s_vet+s_index+i, length);
