@@ -10,10 +10,14 @@
 #define N 10
 
 __device__
-void inversion(char* dest, char* in, int length){
-	for(int i = 0; i < length; i++){
-		dest[i] = in[length-i-1];
+void inversion(char* vet, int length){
+	char temp;
+	for(int i = 0; i < floor(length); i++){
+		temp = vet[length-i-1];
+		vet[length-i-1]; = vet[i]
+		vet[i] = temp;
 	}
+	vet[length-1] = vet[0]
 }
 
 /* __device__
@@ -145,7 +149,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			if(j == 1)
 				return;
 			else{
-				inversion(s_vet + s_index, s_vet + s_index + length -1, length);
+				inversion(s_vet + s_index, length);
 			}
 		}
 		printf("%d\n,lMin_R");
