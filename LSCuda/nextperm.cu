@@ -14,7 +14,7 @@ void inversion(char* vet, int length){
 	char temp;
 	for(int i = 0; i < floor(length); i++){
 		temp = vet[length-i-1];
-		vet[length-i-1]; = vet[i];
+		vet[length-i-1] = vet[i];
 		vet[i] = temp;
 	}
 	vet[length-1] = vet[0];
