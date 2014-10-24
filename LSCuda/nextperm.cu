@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "LIS.cu"
 #include "LDS.cu"
+#include "EnumaratorSequence.cu"
 #include <time.h>
 
 //#define NUM_THREADS 1024
@@ -94,7 +95,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
 
-		char MP[(N+1)*(N+1)];
+		char MP[N*(N+1)/2];
 		char last[N];
 
 		char lLIS, lLDS; 

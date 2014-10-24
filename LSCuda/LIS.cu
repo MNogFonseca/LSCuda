@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define MAP_MP(X) (X*(X-1))/2
 
 //pega o menor valor do vetor last que seja maior do que x
 __device__
@@ -28,19 +29,18 @@ int LISgetPos(char vet[],int tam){
 
 //copia um vetor para outro
 __device__
-void LISVetCopy(char* dest, char* in,int tam){
-	int i;
-	for(i = 0; i<tam;i++){
+void LISVetCopy(int* dest, int* in,int tam){
+	for(int i = 0; i<tam-1;i++){
 		dest[i] = in[i];
 	}
+	dest[tam-1] = -1;
 }
 
 __device__
 unsigned char LIS(char* vet, char* last, char* MP, int tam){
 
 	//inicializa o vetor com os ultimos elementos de MP
-	int i;											 
-	for(i =0;i<tam;i++){
+	for(int i =0;i<tam;i++){
 		last[i] = 127;
 	}
 	
@@ -54,27 +54,24 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 		}
 	}
 
-	MP[tam] = vet[0];
+	MP[0] = vet[0];
 	last[0] = vet[0];
 
-	for(i=1; i < tam; i++){
+	for(int i=1; i < tam; i++){
 
-		char l = LISgetLast(last,vet[i],tam); //pega  valor de l
+		int l = LISgetLast(last,vet[i],tam); //pega  valor de l
 
 		//atualiza o valor de lmax
-		if(l > lmax){
+		if(l > lmax){ 
 			lmax ++;
 		}
 
 			last[l-1] = vet[i]; //atualiza o vetor last
 
 		 	//concatena os vetores de MP
-			LISVetCopy(MP+l*tam,MP+(l-1)*tam,tam);
+			LISVetCopy(MP+MAP_MP(l),MP+MAP_MP(l-1),l);
 
-			int pos = LISgetPos(MP+l*tam,tam);
-			
-			MP[l*tam+pos] = last[l-1];
+			int pos = LISgetPos(MP+MAP_MP(l),tam);			
+			MP[MAP_MP(l)+pos] = last[l-1];
 	}
-	
-	return lmax;
 }
