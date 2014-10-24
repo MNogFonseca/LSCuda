@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
-#define N 13
+#define N 16
 
 __device__
 void inversion(char* dest, char* in, int length){
@@ -16,22 +16,12 @@ void inversion(char* dest, char* in, int length){
 	}
 }
 
-/* __device__
+ __device__
  void rotation(char* in, int length){
  	for(int i = 0; i < length-1; i++){
  		in[length+i] = in[i];
  	}
- }*/
-
-__device__
-void rotation(char *array, int length){
-  char temp;
-  int i;
-  temp = array[0];
-  for (i = 0; i < length-1; i++)
-     array[i] = array[i+1];
-  array[i] = temp;
-}
+ }
 
 int next_permutation(char *array, size_t length) {
 	size_t i, j;
@@ -85,7 +75,7 @@ unsigned long fatorial(unsigned long n){
 void criaSequencias(char* dest, char* in, int length, unsigned int* numSeqReady){
 	//Inserir o pivor em primeiro lugar com suas rotações, e sua inversão também com suas rotações	
 	memcpy(dest,in, length);
-	//memcpy(dest+length,in,(length-1));
+	memcpy(dest+length,in,(length-1));
 
 	(*numSeqReady)++;
 }
@@ -105,7 +95,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
 
-		char MP[N*(N+1)/2];
+		char MP[N*(N+1)/2*(N+1)];
 		char last[N];
 
 		char lLIS, lLDS; 
@@ -133,8 +123,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLDS <= d_lMax_S[tid])
 					return;
-
-				rotation(s_vet + s_index, length);
 			}
 
 			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
@@ -142,6 +130,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				return;
 			else{
 				inversion(s_vet + s_index, s_vet + s_index + length -1, length);
+				rotation(s_vet + s_index, length);
 			}
 		}
 
@@ -180,8 +169,7 @@ int main(int argc, char *argv[]){
 	//Tamanho linear da sequência que vai ser enviada para cada thread.
 	//Vetor consisti em Sua sequência seguida por repetição dos seus primeiros length-1 elementos devido a rotação.
 	//Ex: 1 2 3 4 1 2 3.
-	//int step_element = 2*length-1; 
-	int step_element = length; 
+	int step_element = 2*length-1; 
 
 	//Tamanho linear de cada thread da Shared Memory, composto por:
 	//Vetor MR[N+1]*[N+1] com as sequência LIS e LDS mais promissoras
