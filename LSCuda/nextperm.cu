@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "LIS.cu"
 #include "LDS.cu"
-#include "EnumaratorSequence.cu"
+//#include "EnumaratorSequence.cu"
 #include <time.h>
 
 //#define NUM_THREADS 1024
