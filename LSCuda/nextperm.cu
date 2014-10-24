@@ -134,7 +134,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				if(lLDS <= d_lMax_S[tid])
 					return;
 
-				rotation(s_vet + s_index, length);
+				//rotation(s_vet + s_index, length);
 			}
 
 			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
