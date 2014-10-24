@@ -225,7 +225,7 @@ int main(int argc, char *argv[]){
 			
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = step_element*THREAD_PER_BLOCK;
-			
+			printf("Indo\n");
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]){
 		}	
 
 		//Cria a próxima sequência na ordem lexicográfica
-		next_permutation(h_sequence+step_element,length-1);
+		next_permutation(h_sequence+1,length-1);
 		counter--;
 
 		if((counterMax - counter)%(counterMax/100) == 0){
