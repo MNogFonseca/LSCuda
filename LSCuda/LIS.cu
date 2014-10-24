@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAP_MP(X) (X*(X-1))/2
+
+__device__
+int MAP_MP(int n){
+	return n*(n-1)/2;
+}
 
 //pega o menor valor do vetor last que seja maior do que x
 __device__
