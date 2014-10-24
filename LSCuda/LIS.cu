@@ -74,4 +74,5 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 			int pos = LISgetPos(MP+MAP_MP(l),tam);			
 			MP[MAP_MP(l)+pos] = last[l-1];
 	}
+	return lmax;
 }

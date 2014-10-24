@@ -73,4 +73,5 @@ unsigned char LDS(char* vet, char* last, char* MP, int tam){
 			int pos = LDSgetPos(MP+MAP_MP(l),tam);			
 			MP[MAP_MP(l)+pos] = last[l-1];
 	}
+	return lmax;
 }
