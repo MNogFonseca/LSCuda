@@ -1,11 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-__device__
-int MAP_MP(int n){
-	return n*(n-1)/2;
-}
-
 //pega o menor valor do vetor last que seja maior do que x
 __device__
 char LDSgetLast(char* last,int x,int tam){
