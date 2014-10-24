@@ -110,16 +110,14 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
 				
-				lLIS = LIS(s_vet + s_index + i, last, MP, length);
-				printf("Saiu - %d - %d\n",0,0);
+				lLIS = LIS(s_vet + s_index, last, MP, length);
+				
 
-				if(threadIdx.x == 0){
-					printf("\n%d - %d   --",lMin_R, lLIS);
-					printVector(s_vet+s_index+i, length);
-				}
+				
+
 
 				if(lLIS < lMin_R){
-					printf("Entrou\n");		
+
 					lMin_R = lLIS;	
 				}
 
@@ -127,7 +125,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				if(lLIS <= d_lMax_S[tid])
 					return;				
 
-				lLDS = LDS(s_vet + s_index + i, last, MP, length);
+				lLDS = LDS(s_vet + s_index, last, MP, length);
 				if(lLDS < lMin_R){
 					lMin_R = lLDS;
 				}
