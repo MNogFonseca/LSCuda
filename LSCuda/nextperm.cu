@@ -86,15 +86,6 @@ unsigned long fatorial(unsigned long n){
 	return result;
 }
 
-//Gera todos os pivores do conjunto R, já inserindo sua rotação
-void criaSequencias(char* dest, char* in, int length, unsigned int* numSeqReady){
-	//Inserir o pivor em primeiro lugar com suas rotações, e sua inversão também com suas rotações	
-	memcpy(dest,in, length);
-	//memcpy(dest+length,in,(length-1));
-
-	(*numSeqReady)++;
-}
-
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
 void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_seq){
@@ -224,10 +215,9 @@ int main(int argc, char *argv[]){
 	while(counter){
 		
 		//Gera todos os pivores do conjunto R
-		criaSequencias(h_threadSequences + numSeqReady*step_element, //Movimentar o vetor de sequências geradas para a posição correta
-		    		   h_sequence, //Vetor pivor
-                       length,
-			           &numSeqReady); //Número de threads prontos
+		memcpy(h_threadSequences + numSeqReady*step_element,
+			   h_sequence, length);
+		numSeqReady++;
 		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if(numSeqReady == NUM_THREADS){
@@ -245,7 +235,7 @@ int main(int argc, char *argv[]){
 		}	
 
 		//Cria a próxima sequência na ordem lexicográfica
-		next_permutation(h_sequence+1,length-1);
+		next_permutation(h_sequence+step_element,length-1);
 		counter--;
 
 		if((counterMax - counter)%(counterMax/100) == 0){
