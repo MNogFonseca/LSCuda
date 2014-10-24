@@ -120,7 +120,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 					printf("%d - %d   --",lMin_R, lLIS);
 					printVector(s_vet+s_index+i, length);
 				}
-
+				printf("%d - %d   --",lMin_R, tid);
 				if(lLIS < lMin_R){
 					
 					lMin_R = lLIS;	
