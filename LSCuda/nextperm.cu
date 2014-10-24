@@ -111,7 +111,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			for(int i = 0; i < length; i++){
 				
 				lLIS = LIS(s_vet + s_index + i, last, MP, length);
-				printf("Saiu - %d - %d\n",lLIS, lMin_R);
+				printf("Saiu - %d - %d\n",0,0);
 
 				if(threadIdx.x == 0){
 					printf("\n%d - %d   --",lMin_R, lLIS);
