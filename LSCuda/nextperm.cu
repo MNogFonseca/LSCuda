@@ -109,15 +109,17 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
-				printf("Entrou\n");
+				
 				lLIS = LIS(s_vet + s_index + i, last, MP, length);
-				printf("Saiu\n");
+				printf("Saiu - %d - %d\n",lLIS, lMin_R);
+
 				if(threadIdx.x == 0){
-					printf("%d - %d   --",lMin_R, lLIS);
+					printf("\n%d - %d   --",lMin_R, lLIS);
 					printVector(s_vet+s_index+i, length);
 				}
+
 				if(lLIS < lMin_R){
-					
+					printf("Entrou\n");		
 					lMin_R = lLIS;	
 				}
 
