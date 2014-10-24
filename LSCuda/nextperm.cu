@@ -100,7 +100,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
-
+		printf("Entrou\n");
 		char MP[N*(N+1)/2];
 		char last[N];
 
