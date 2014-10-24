@@ -26,8 +26,9 @@ void inversion(char* dest, char* in, int length){
 __device__
 void rotation(char *array, int length){
   char temp;
+  int i;
   temp = array[0];
-  for (int i = 0; i < length-1; i++)
+  for (i = 0; i < length-1; i++)
      array[i] = array[i+1];
   array[i] = temp;
 }
