@@ -16,8 +16,11 @@ void inversion(char* vet, int length){
 		temp = vet[length-i-1];
 		vet[length-i-1] = vet[i];
 		vet[i] = temp;
+		printVector(vet, length);
 	}
 	vet[length-1] = vet[0];
+	printVector(vet, length);
+	printf("Saida\n");
 }
 
 __device__
