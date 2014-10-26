@@ -237,10 +237,11 @@ int main(int argc, char *argv[]){
 		counter--;
 		printf("3 %d\n", counterMax);
 		if((counterMax - counter)%(counterMax/100) == 0){
+			printf("4 %d\n", numSeqReady);
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
-		printf("4 %d\n", numSeqReady);
+		
 
 	}
 	printf("5 %d\n", numSeqReady);
