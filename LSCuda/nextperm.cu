@@ -199,7 +199,7 @@ int main(int argc, char *argv[]){
 	h_lMax_S = (char*) malloc(NUM_THREADS);
 	cudaMalloc(&d_threadSequences, step_element*NUM_THREADS);
 	cudaMalloc(&d_lMax_S, NUM_THREADS);
-	cudaMemset(&d_lMax_S, 0, NUM_THREADS);
+	cudaMemset(&d_lMax_S, 127, NUM_THREADS);
 	//Gera a sequência primária, de menor ordem léxica	
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
