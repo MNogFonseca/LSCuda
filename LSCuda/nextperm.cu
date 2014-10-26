@@ -129,11 +129,12 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
+				printf("d_lMax_S: %d\n\n",d_lMax_S[tid]);
 				if(lLDS <= d_lMax_S[tid]){
-					printf("Saiu LDS\n");
+					printf("Saiu LDS\n\n");
 					return;
 				}
-								
+
 				rotation(s_vet + s_index, length);
 			}
 
