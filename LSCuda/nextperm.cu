@@ -143,7 +143,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				inversion(s_vet + s_index, length);
 			}
 		}
-		//printf("%d\n,lMin_R");
+		printf("%d\n,lMin_R");
 		d_lMax_S[tid] = lMin_R;
 	}
 }
