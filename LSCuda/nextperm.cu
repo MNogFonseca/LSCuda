@@ -122,15 +122,18 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				}
 
 				lLDS = LDS(s_vet + s_index, last, MP, length);
+
 				if(lLDS < lMin_R){
+					printf("lLDS: %d\n", lLDS);
 					lMin_R = lLDS;
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLDS <= d_lMax_S[tid])
 					return;
-
+				printf("Rotation Enter\n");
 				rotation(s_vet + s_index, length);
+				printf("Rotation Saiu\n");
 			}
 
 			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
