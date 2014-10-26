@@ -117,7 +117,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLIS <= d_lMax_S[tid]){
-					//printf("Saiu\n");
+					printf("Saiu\n");
 					return;				
 				}
 
@@ -140,7 +140,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				inversion(s_vet + s_index, length);
 			}
 		}
-		printf("lMIN_R%d\n",lMin_R);
+		printf("lMIN_R %d\n",lMin_R);
 		d_lMax_S[tid] = lMin_R;
 	}
 }
