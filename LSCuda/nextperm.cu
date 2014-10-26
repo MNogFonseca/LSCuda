@@ -235,9 +235,9 @@ int main(int argc, char *argv[]){
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
 		counter--;
-		printf("3 %f\n", (counterMax/100.0f));
+		printf("3 %f\n", numSeqReady);
 		
-		if((counterMax - counter)%(counterMax/100.0) == 0){
+		if((counterMax - counter)%(counterMax/100+1) == 0){
 
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
