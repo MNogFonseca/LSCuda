@@ -240,7 +240,7 @@ int main(int argc, char *argv[]){
 		if((counterMax - counter)%(counterMax/100+1) == 0){
 			printf("3.5\n");
 			end = clock();
-			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
+			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
 		printf("4 %d\n", numSeqReady);
 		
