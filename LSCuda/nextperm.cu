@@ -21,7 +21,7 @@ __device__
 void inversion(char* vet, int length){
 	char temp;
 	printVector(vet, length);
-	for(int i = 0; i < length; i++){
+	for(int i = 0; i < length/2; i++){
 		temp = vet[length-i-1];
 		vet[length-i-1] = vet[i];
 		vet[i] = temp;
