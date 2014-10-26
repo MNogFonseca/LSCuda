@@ -76,9 +76,6 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 		}
 	}
 
-	printf("Aqui aqui\n");
-	LISprintMP(MP, tam);
-
 	MP[0] = vet[0];
 	last[0] = vet[0];
 
@@ -98,7 +95,7 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 
 			int pos = LISgetPos(MP+MAP_MP(l),tam);			
 			MP[MAP_MP(l)+pos] = last[l-1];
-			LISprintMP(MP, tam);
+			//LISprintMP(MP, tam);
 	}
 	printf("LMAX - %d\n", lmax);
 	return lmax;
