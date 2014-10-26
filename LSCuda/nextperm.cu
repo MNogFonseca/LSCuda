@@ -248,7 +248,7 @@ int main(int argc, char *argv[]){
 		
 	}
 
-	cudaMemcpy(h_lMax_S, d_lMax_S, numSeqReady, cudaMemcpyDeviceToHost);
+	cudaMemcpy(h_lMax_S, d_lMax_S, NUM_THREADS, cudaMemcpyDeviceToHost);
 	char lMax_S = 0;
 	calcLMaxS(&lMax_S, h_lMax_S, NUM_THREADS);	
 
