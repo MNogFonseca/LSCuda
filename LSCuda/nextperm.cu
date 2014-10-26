@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 1
-#define N 7
+#define N 6
 
 __device__
 void inversion(char* vet, int length){
@@ -92,20 +92,16 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 	//Step_shared - quantidade de posições utilizada por cada thread
 	//Step_seq - quantidade de posições utilizadas pela sequência
 	//step_last - quantidade de posições utilizado pelo vetor Lasto do LSI/LDS
-	printf("LIS \n");
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = step_seq*threadIdx.x; //Indice da shared memory
-	printf("tid: %d \n", tid);
 	if(tid < numThread){
-		printf("LIS \n");
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
 		
 		char MP[N*(N+1)/2];
 		char last[N];
-		printf("LIS \n");
 		char lLIS, lLDS; 
 		char lMin_R = 127;
 		for(int j = 0; j < 2; j++){ //Inverção
