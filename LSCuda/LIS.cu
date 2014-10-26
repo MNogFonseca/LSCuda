@@ -99,5 +99,6 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 			MP[MAP_MP(l)+pos] = last[l-1];
 			LISprintMP(MP, tam);
 	}
+	printf("LMAX - %d\n", lmax);
 	return lmax;
 }
