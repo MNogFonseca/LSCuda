@@ -10,6 +10,14 @@
 #define N 13
 
 __device__
+void printVector(char* array, int length){
+	for(int k = 0; k < length; k++){
+		printf("%d - ",array[k]);	
+	}
+	printf("\n");
+}
+
+__device__
 void inversion(char* vet, int length){
 	char temp;
 	for(int i = 0; i < length; i++){
@@ -63,14 +71,6 @@ int next_permutation(char *array, size_t length) {
 		j--;
 	}
 	return 1;
-}
-
-__device__
-void printVector(char* array, int length){
-	for(int k = 0; k < length; k++){
-		printf("%d - ",array[k]);	
-	}
-	printf("\n");
 }
 
 unsigned long fatorial(unsigned long n){
