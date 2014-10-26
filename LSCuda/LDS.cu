@@ -45,11 +45,9 @@ unsigned char LDS(char* vet, char* last, char* MP, int tam){
 	
 	char lmax = 1;  //maior tamanho de subsequencia
 	
-	for(int i = 0;i<tam; i++){
-		int j;
-		for(j = 0;j<tam; j++){
-			
-			MP[i*tam+j] = -1;
+	for(int i = 1, pos = 0;i <= tam; i++){
+		for(int j = 0; j < i; j++, pos++){
+			MP[pos] = -1;
 		}
 	}
 
@@ -72,6 +70,9 @@ unsigned char LDS(char* vet, char* last, char* MP, int tam){
 
 			int pos = LDSgetPos(MP+MAP_MP(l),tam);			
 			MP[MAP_MP(l)+pos] = last[l-1];
+	}
+	if(lmax == 32){
+		LISprintMP(MP, tam);	
 	}
 	return lmax;
 }
