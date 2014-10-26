@@ -6,8 +6,8 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 1
-#define N 12
+#define THREAD_PER_BLOCK 128
+#define N 13
 
 __device__
 void printVector(char* array, int length){
@@ -20,14 +20,11 @@ void printVector(char* array, int length){
 __device__
 void inversion(char* vet, int length){
 	char temp;
-	printVector(vet, length);
 	for(int i = 0; i < length/2; i++){
 		temp = vet[length-i-1];
 		vet[length-i-1] = vet[i];
 		vet[i] = temp;
-		printVector(vet, length);
 	}	
-	printf("Saida\n");
 }
 
 __device__
@@ -101,7 +98,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 		char lMin_R = 127;
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
-				printVector(s_vet+s_index, length);
 				lLIS = LIS(s_vet + s_index, last, MP, length);
 				if(lLIS < lMin_R){
 					lMin_R = lLIS;	
@@ -131,7 +127,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 			if(j == 1)
 				break;
 			else{
-				printf("Inversão\n");
 				inversion(s_vet + s_index, length);
 			}
 		}
@@ -219,7 +214,6 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady);
-			printf("++++++++++++++++++++++++++++++++++++++\n");
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
