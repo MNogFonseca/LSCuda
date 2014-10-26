@@ -143,6 +143,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 void calcLMaxS(char* lMax_S, char* lMin_R, int tamVec){
 	//Número de conjuntos
 	for(int i = 0; i < tamVec; i++){
+		printf("lMin[%d] - %d\n", i, lMin_R[i]);
 		if(*lMax_S < lMin_R[i]){
 			*lMax_S = lMin_R[i];
 		}
