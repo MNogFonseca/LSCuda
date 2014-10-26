@@ -154,7 +154,7 @@ void calcLMaxS(char* lMax_S, char* lMin_R, int tamVec){
 	//Número de conjuntos
 	printf("calcMaxS\n");
 	for(int i = 0; i < tamVec; i++){
-		printf("calcMaxS: %d - %d\n",*lMax_s, lMin_R[i]);
+		printf("calcMaxS: %d - %d\n",*lMax_S, lMin_R[i]);
 		if(*lMax_S < lMin_R[i]){
 			*lMax_S = lMin_R[i];
 		}
