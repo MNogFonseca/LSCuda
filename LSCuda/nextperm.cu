@@ -92,6 +92,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 	//Step_shared - quantidade de posições utilizada por cada thread
 	//Step_seq - quantidade de posições utilizadas pela sequência
 	//step_last - quantidade de posições utilizado pelo vetor Lasto do LSI/LDS
+	printf("LIS \n");
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = step_seq*threadIdx.x; //Indice da shared memory
