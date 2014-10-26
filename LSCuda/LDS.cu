@@ -60,7 +60,7 @@ unsigned char LDS(char* vet, char* last, char* MP, int tam){
 
 	//inicializa o vetor com os ultimos elementos de MP
 	for(int i =0;i<tam;i++){
-		last[i] = 127;
+		last[i] = 0;
 	}
 	
 	char lmax = 1;  //maior tamanho de subsequencia
@@ -92,8 +92,6 @@ unsigned char LDS(char* vet, char* last, char* MP, int tam){
 			MP[MAP_MP(l)+pos] = last[l-1];
 			//LDSprintMP(MP, tam);
 	}
-	if(lmax == 32){
-		LDSprintMP(MP, tam);	
-	}
+
 	return lmax;
 }

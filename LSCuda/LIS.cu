@@ -97,8 +97,5 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 			MP[MAP_MP(l)+pos] = last[l-1];
 			//LISprintMP(MP, tam);
 	}
-	if(lmax == 32){
-		LISprintMP(MP, tam);	
-	}
 	return lmax;
 }
