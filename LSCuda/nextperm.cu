@@ -96,7 +96,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = step_seq*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
-		printf("threadId: ")
+		printf("threadId: %d",tid);
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
