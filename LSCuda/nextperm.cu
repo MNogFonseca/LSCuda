@@ -219,7 +219,7 @@ int main(int argc, char *argv[]){
 		memcpy(h_threadSequences + numSeqReady*step_element,
 			   h_sequence, length);
 		numSeqReady++;
-		
+		printf("1 %d\n", numSeqReady);
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if(numSeqReady == NUM_THREADS){
 			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*step_element, cudaMemcpyHostToDevice);
@@ -233,11 +233,11 @@ int main(int argc, char *argv[]){
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
-
+		printf("2 %d\n", numSeqReady);
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
 		counter--;
-
+		printf("3 %d\n", numSeqReady);
 		if((counterMax - counter)%(counterMax/100) == 0){
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
