@@ -133,6 +133,9 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 				inversion(s_vet + s_index, length);
 			}
 		}
+		if(lMin_R == 4){
+			printf("Entrou aqui\n");
+		}
 		d_lMax_S[tid] = lMin_R;
 	}
 }
