@@ -2,11 +2,6 @@
 #include <stdlib.h>
 
 __device__
-int MAP_MP(int n){
-	return n*(n-1)/2;
-}
-
-__device__
 void LDSprintMP(char* mat,int tam){
 	int i, j;
 	int pos = 0;
