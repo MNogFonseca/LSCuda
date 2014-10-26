@@ -7,7 +7,7 @@ int MAP_MP(int n){
 }
 
 __device__
-void LISprintMP(int* mat,int tam){
+void LISprintMP(char* mat,int tam){
 	int i, j;
 	int pos = 0;
 	for(i = 1 ; i<tam+1 ; i++){
