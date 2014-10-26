@@ -199,7 +199,6 @@ int main(int argc, char *argv[]){
 	h_lMax_S = (char*) malloc(NUM_THREADS);
 	cudaMalloc(&d_threadSequences, step_element*NUM_THREADS);
 	cudaMalloc(&d_lMax_S, NUM_THREADS);
-	cudaMemset(&d_lMax_S, 127, NUM_THREADS);
 	//Gera a sequência primária, de menor ordem léxica	
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
@@ -216,7 +215,6 @@ int main(int argc, char *argv[]){
 	unsigned long counter = fatorial(length-1)/2 -1;
 	unsigned long counterMax = counter;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	
 	while(counter){
 		//Gera todos os pivores do conjunto R
 		memcpy(h_threadSequences + numSeqReady*step_element,
@@ -228,6 +226,7 @@ int main(int argc, char *argv[]){
 			
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = step_element*THREAD_PER_BLOCK;
+			cudaMemset(&d_lMax_S, 0, NUM_THREADS);
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
