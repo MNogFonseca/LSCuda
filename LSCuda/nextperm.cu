@@ -111,7 +111,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				lLIS = LIS(s_vet + s_index, last, MP, length);
 				printf("lLIS[%d]: %d\n",tid, lLIS);
 				if(lLIS < lMin_R){
-					printVector(s_vet + s_index, length);
+					//printVector(s_vet + s_index, length);
 					lMin_R = lLIS;	
 				}
 
@@ -130,7 +130,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				
 
 				if(lLDS <= d_lMax_S[tid]){
-					printf("Saiu LDS\n\n");
+					printf("Saiu LDS - %d\n\n",tid);
 					return;
 				}
 
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
-					
+			printf("*********************************************\n");
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
