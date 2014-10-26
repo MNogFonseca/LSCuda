@@ -133,19 +133,13 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 				inversion(s_vet + s_index, length);
 			}
 		}
-		d_lMax_S[tid] = lMin_R;
-		if(tid == 263){
-			printf("Entrou aqui\n");
-			printf("d_lMax[%d] - %d\n", tid, d_lMax_S[tid]);
-		}
-		
+		d_lMax_S[tid] = lMin_R;		
 	}
 }
 
 void calcLMaxS(char* lMax_S, char* lMin_R, int tamVec){
 	//Número de conjuntos
 	for(int i = 0; i < tamVec; i++){
-		printf("lMax: %d\n",lMin_R[i]);
 		if(*lMax_S < lMin_R[i]){
 			*lMax_S = lMin_R[i];
 		}
