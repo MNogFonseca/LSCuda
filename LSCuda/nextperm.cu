@@ -113,8 +113,8 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				lLIS = LIS(s_vet + s_index, last, MP, length);
 				
 				if(lLIS < lMin_R){
-					printf("lLIS: %d\n", lLIS);
-					printVector(s_vet + s_index, length);
+					//printf("lLIS: %d\n", lLIS);
+					//printVector(s_vet + s_index, length);
 					lMin_R = lLIS;	
 				}
 
