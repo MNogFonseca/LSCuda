@@ -129,13 +129,11 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 			if(j == 1)
 				break;
 			else{
+				printf("Inversão\n");
 				inversion(s_vet + s_index, length);
 			}
 		}
-		if(lMin_R == 5){
-			printf("Entrou aqui\n");
-		}
-		printf("[%d] - %d -> %d\n", tid, d_lMax_S[tid], lMin_R);
+		//printf("[%d] - %d -> %d\n", tid, d_lMax_S[tid], lMin_R);
 		d_lMax_S[tid] = lMin_R;		
 	}
 }
@@ -219,7 +217,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady);
-
+			printf("++++++++++++++++++++++++++++++++++++++\n");
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
@@ -229,7 +227,7 @@ int main(int argc, char *argv[]){
 		
 		if((counterMax - counter)%(counterMax/100+1) == 0){
 			end = clock();
-			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
+			//printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
 	}
 
