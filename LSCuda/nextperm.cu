@@ -6,8 +6,8 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 1
-#define N 6
+#define THREAD_PER_BLOCK 128
+#define N 15
 
 __device__
 void inversion(char* vet, int length){
@@ -19,13 +19,6 @@ void inversion(char* vet, int length){
 	}
 	vet[length-1] = vet[0];
 }
-
-/* __device__
- void rotation(char* in, int length){
- 	for(int i = 0; i < length-1; i++){
- 		in[length+i] = in[i];
- 	}
- }*/
 
 __device__
 void rotation(char *array, int length){
@@ -96,7 +89,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = step_seq*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
-		printf("d_lMax_S[%d]: %d\n\n",tid,d_lMax_S[tid]);
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
@@ -109,7 +101,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			for(int i = 0; i < length; i++){
 				
 				lLIS = LIS(s_vet + s_index, last, MP, length);
-				printf("lLIS[%d]: %d\n",tid, lLIS);
 				if(lLIS < lMin_R){
 					//printVector(s_vet + s_index, length);
 					lMin_R = lLIS;	
@@ -117,12 +108,10 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLIS <= d_lMax_S[tid]){
-					printf("Saiu LIS - %d\n\n",tid);
 					return;				
 				}
 
 				lLDS = LDS(s_vet + s_index, last, MP, length);
-				printf("lLDS[%d]: %d\n",tid, lLDS);
 				if(lLDS < lMin_R){				
 					lMin_R = lLDS;
 				}
@@ -131,7 +120,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				
 
 				if(lLDS <= d_lMax_S[tid]){
-					printf("Saiu LDS - %d\n\n",tid);
 					return;
 				}
 
@@ -145,7 +133,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				inversion(s_vet + s_index, length);
 			}
 		}
-		printf("+++++++Entrou aqui - %d\n",tid);
 		d_lMax_S[tid] = lMin_R;
 	}
 }
@@ -200,7 +187,7 @@ int main(int argc, char *argv[]){
 	cudaMalloc(&d_threadSequences, step_element*NUM_THREADS);
 	cudaMalloc(&d_lMax_S, NUM_THREADS);
 	cudaMemset(d_lMax_S, 0, NUM_THREADS);
-	
+
 	//Gera a sequência primária, de menor ordem léxica	
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
@@ -232,7 +219,7 @@ int main(int argc, char *argv[]){
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
-			printf("*********************************************\n");
+
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
@@ -242,7 +229,7 @@ int main(int argc, char *argv[]){
 		
 		if((counterMax - counter)%(counterMax/100+1) == 0){
 			end = clock();
-			//printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
+			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
 	}
 
