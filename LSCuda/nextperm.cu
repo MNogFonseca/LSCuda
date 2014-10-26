@@ -199,8 +199,8 @@ int main(int argc, char *argv[]){
 	//Gera a sequência primária, de menor ordem léxica	
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
-printf("NUMSEQ %d\n", numSeqReady);
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
+	printf("NUMSEQ %d\n", numSeqReady);
 	//char lMax_S = 0; //Resultado final, maior valor encontrado do grupo S
 
 	start = clock();
