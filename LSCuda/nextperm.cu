@@ -235,14 +235,14 @@ int main(int argc, char *argv[]){
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
 		counter--;
-		printf("3 %f\n", numSeqReady);
+		printf("3 %d\n", numSeqReady);
 		
 		if((counterMax - counter)%(counterMax/100+1) == 0){
 
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
-		printf("4 %d\n", (counterMax - counter));
+		printf("4 %d\n", numSeqReady);
 		
 
 	}
