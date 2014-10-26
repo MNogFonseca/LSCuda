@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
-	printf("NUMSEQ %d\n", numSeqReady);
+	
 	//char lMax_S = 0; //Resultado final, maior valor encontrado do grupo S
 
 	start = clock();
@@ -212,9 +212,9 @@ int main(int argc, char *argv[]){
 	unsigned long counter = fatorial(length-1)/2 -1;
 	unsigned long counterMax = counter;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	printf("NUMSEQ %d\n", numSeqReady);
+	
 	while(counter){
-		printf("NUMSEQ %d\n", numSeqReady);
+		printf("0 %d\n", numSeqReady);
 		//Gera todos os pivores do conjunto R
 		memcpy(h_threadSequences + numSeqReady*step_element,
 			   h_sequence, length);
@@ -242,8 +242,10 @@ int main(int argc, char *argv[]){
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
+		printf("4 %d\n", numSeqReady);
 
 	}
+	printf("5 %d\n", numSeqReady);
 
 	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
 	if(numSeqReady != 0){
