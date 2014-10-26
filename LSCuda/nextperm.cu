@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
-#define N 13
+#define N 16
 
 __device__
 void printVector(char* array, int length){
@@ -130,7 +130,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 				inversion(s_vet + s_index, length);
 			}
 		}
-		//printf("[%d] - %d -> %d\n", tid, d_lMax_S[tid], lMin_R);
 		d_lMax_S[tid] = lMin_R;		
 	}
 }
@@ -223,7 +222,7 @@ int main(int argc, char *argv[]){
 		
 		if((counterMax - counter)%(counterMax/100+1) == 0){
 			end = clock();
-			//printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
+			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
 	}
 
