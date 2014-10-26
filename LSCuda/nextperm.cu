@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 1
-#define N 5
+#define N 10
 
 __device__
 void inversion(char* vet, int length){
