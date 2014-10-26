@@ -81,16 +81,16 @@ unsigned long fatorial(unsigned long n){
 
 //Min(|LIS(s)|, |LDS(s)|)
 __global__
-void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_seq){
+void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 	//Step_shared - quantidade de posições utilizada por cada thread
-	//Step_seq - quantidade de posições utilizadas pela sequência
+	//length - quantidade de posições utilizadas pela sequência
 	//step_last - quantidade de posições utilizado pelo vetor Lasto do LSI/LDS
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
-	int s_index = step_seq*threadIdx.x; //Indice da shared memory
+	int s_index = length*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
-		for(int i = 0; i < step_seq; i++){
-			s_vet[s_index+i] = vector[tid*step_seq+i];
+		for(int i = 0; i < length; i++){
+			s_vet[s_index+i] = vector[tid*length+i];
 		}
 		
 		char MP[N*(N+1)/2];
@@ -168,21 +168,20 @@ int main(int argc, char *argv[]){
 	//Tamanho linear da sequência que vai ser enviada para cada thread.
 	//Vetor consisti em Sua sequência seguida por repetição dos seus primeiros length-1 elementos devido a rotação.
 	//Ex: 1 2 3 4 1 2 3.
-	//int step_element = 2*length-1; 
-	int step_element = length; 
+	//int length = 2*length-1; 
 
 	//Tamanho linear de cada thread da Shared Memory, composto por:
 	//Vetor MR[N+1]*[N+1] com as sequência LIS e LDS mais promissoras
 	//Vetor Last[N] com o tamanho do ultimo valor de cada sequência promissora
-	//Sequência geradas de tamanho step_element
-	printf("Shared: %d\n", step_element*THREAD_PER_BLOCK);
+	//Sequência geradas de tamanho length
+	printf("Shared: %d\n", length*THREAD_PER_BLOCK);
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
 	h_sequence = (char*) malloc(length);
-	h_threadSequences = (char*) malloc(step_element*NUM_THREADS);
+	h_threadSequences = (char*) malloc(length*NUM_THREADS);
 	h_lMax_S = (char*) malloc(NUM_THREADS);
-	cudaMalloc(&d_threadSequences, step_element*NUM_THREADS);
+	cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaMalloc(&d_lMax_S, NUM_THREADS);
 	cudaMemset(d_lMax_S, 0, NUM_THREADS);
 
@@ -204,19 +203,19 @@ int main(int argc, char *argv[]){
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
 		//Gera todos os pivores do conjunto R
-		memcpy(h_threadSequences + numSeqReady*step_element,
+		memcpy(h_threadSequences + numSeqReady*length,
 			   h_sequence, length);
 		numSeqReady++;
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if(numSeqReady == NUM_THREADS){
-			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*step_element, cudaMemcpyHostToDevice);
+			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*length, cudaMemcpyHostToDevice);
 			
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = step_element*THREAD_PER_BLOCK;
+			int tam_shared = length*THREAD_PER_BLOCK;
 
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
+					   (d_threadSequences, d_lMax_S, length, numSeqReady);
 
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
@@ -239,7 +238,7 @@ int main(int argc, char *argv[]){
 		int tam_shared = ((length+1)*(length+1)+(3*length-1))*THREAD_PER_BLOCK*sizeof(int);
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
+			       (d_threadSequences, d_lMax_S, length, numSeqReady, length);
 		
 	}
 
