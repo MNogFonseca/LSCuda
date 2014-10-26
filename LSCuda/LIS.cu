@@ -6,6 +6,26 @@ int MAP_MP(int n){
 	return n*(n-1)/2;
 }
 
+__device__
+void LISprintMP(int* mat,int tam){
+	int i, j;
+	int pos = 0;
+	for(i = 1 ; i<tam+1 ; i++){
+		for(j = 0; j < i; j++, pos++){ 
+			printf("%d |",mat[pos]);
+		}
+		printf("\n");	
+		//if(mat[i]== -1){
+		//	break;
+		//}
+		//else
+		//	printf("%d -",mat[i]);
+
+	}
+	printf("\n");	
+}
+
+
 //pega o menor valor do vetor last que seja maior do que x
 __device__
 char LISgetLast(char* last,char x,int tam){
@@ -77,6 +97,7 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 
 			int pos = LISgetPos(MP+MAP_MP(l),tam);			
 			MP[MAP_MP(l)+pos] = last[l-1];
+			LISprintMP(MP, tam);
 	}
 	return lmax;
 }
