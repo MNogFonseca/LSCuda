@@ -133,10 +133,8 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 					printf("Saiu LDS\n");
 					return;
 				}
-				
-				printf("Rotation Enter\n");
+								
 				rotation(s_vet + s_index, length);
-				printf("Rotation Saiu\n");
 			}
 
 			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
