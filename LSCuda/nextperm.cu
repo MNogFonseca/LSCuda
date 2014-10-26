@@ -20,6 +20,7 @@ void printVector(char* array, int length){
 __device__
 void inversion(char* vet, int length){
 	char temp;
+	printVector(vet, length);
 	for(int i = 0; i < length; i++){
 		temp = vet[length-i-1];
 		vet[length-i-1] = vet[i];
