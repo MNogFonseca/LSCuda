@@ -213,8 +213,8 @@ int main(int argc, char *argv[]){
 	unsigned long counterMax = counter;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter){
-		
 		//Gera todos os pivores do conjunto R
+		prinf("NUMSEQ %d\n", numSeqReady);
 		memcpy(h_threadSequences + numSeqReady*step_element,
 			   h_sequence, length);
 		numSeqReady++;
@@ -241,6 +241,7 @@ int main(int argc, char *argv[]){
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
+
 	}
 
 	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
