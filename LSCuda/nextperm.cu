@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 1
-#define N 13
+#define N 12
 
 __device__
 void printVector(char* array, int length){
@@ -26,9 +26,7 @@ void inversion(char* vet, int length){
 		vet[length-i-1] = vet[i];
 		vet[i] = temp;
 		printVector(vet, length);
-	}
-	vet[length-1] = vet[0];
-	printVector(vet, length);
+	}	
 	printf("Saida\n");
 }
 
