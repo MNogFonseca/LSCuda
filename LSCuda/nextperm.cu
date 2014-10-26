@@ -109,23 +109,20 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 			for(int i = 0; i < length; i++){
 				
 				lLIS = LIS(s_vet + s_index, last, MP, length);
-				
+				printf("lLIS[%d]: %d\n",tid, lLIS);
 				if(lLIS < lMin_R){
-					printf("lLIS: %d\n", lLIS);
 					printVector(s_vet + s_index, length);
 					lMin_R = lLIS;	
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLIS <= d_lMax_S[tid]){
-					printf("Saiu\n");
 					return;				
 				}
 
 				lLDS = LDS(s_vet + s_index, last, MP, length);
-
-				if(lLDS < lMin_R){
-					printf("lLDS: %d\n", lLDS);
+				printf("lLDS[%d]: %d\n",tid, lLDS);
+				if(lLDS < lMin_R){				
 					lMin_R = lLDS;
 				}
 
