@@ -72,11 +72,13 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 	
 	for(int i = 0;i<tam; i++){
 		int j;
-		for(j = 0;j<tam; j++){
+		for(j = 0;j<=i; j++){
 			
 			MP[i*tam+j] = -1;
 		}
 	}
+	printf("Aqui aqui\n");
+	LISprintMP(MP, tam);
 
 	MP[0] = vet[0];
 	last[0] = vet[0];
