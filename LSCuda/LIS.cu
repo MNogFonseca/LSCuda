@@ -70,7 +70,7 @@ unsigned char LIS(char* vet, char* last, char* MP, int tam){
 	
 	char lmax = 1;  //maior tamanho de subsequencia
 
-	for(int i = 1, int pos = 0;i <= tam; i++){
+	for(int i = 1, pos = 0;i <= tam; i++){
 		for(int j = 0; j < i; j++, pos++){
 			MP[pos] = -1;
 		}
