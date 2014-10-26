@@ -6,7 +6,7 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 128
+#define THREAD_PER_BLOCK 1
 #define N 13
 
 __device__
@@ -99,7 +99,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 		char lMin_R = 127;
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
-				
+				printVector(s_vet+s_index, length);
 				lLIS = LIS(s_vet + s_index, last, MP, length);
 				if(lLIS < lMin_R){
 					lMin_R = lLIS;	
