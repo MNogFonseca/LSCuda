@@ -140,7 +140,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				inversion(s_vet + s_index, length);
 			}
 		}
-		printf("%d\n,lMin_R");
+		printf("lMIN_R%d\n",lMin_R);
 		d_lMax_S[tid] = lMin_R;
 	}
 }
@@ -221,7 +221,6 @@ int main(int argc, char *argv[]){
 			
 			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
 			int tam_shared = step_element*THREAD_PER_BLOCK;
-			printf("%d - %d\n", num_blocks.x, tam_shared);
 			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|))
 			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 					   (d_threadSequences, d_lMax_S, length, numSeqReady, step_element);
