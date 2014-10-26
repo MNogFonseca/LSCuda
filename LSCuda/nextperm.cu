@@ -211,12 +211,10 @@ int main(int argc, char *argv[]){
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	
 	while(counter){
-		printf("0 %d\n", numSeqReady);
 		//Gera todos os pivores do conjunto R
 		memcpy(h_threadSequences + numSeqReady*step_element,
 			   h_sequence, length);
 		numSeqReady++;
-		printf("1 %d\n", numSeqReady);
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
 		if(numSeqReady == NUM_THREADS){
 			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*step_element, cudaMemcpyHostToDevice);
@@ -231,22 +229,15 @@ int main(int argc, char *argv[]){
 			//Recomeça a gerar sequências
 			numSeqReady = 0; 
 		}	
-		printf("2 %d\n", numSeqReady);
 		//Cria a próxima sequência na ordem lexicográfica
 		next_permutation(h_sequence+1,length-1);
 		counter--;
-		printf("3 %d\n", numSeqReady);
 		
 		if((counterMax - counter)%(counterMax/100+1) == 0){
-			printf("3.5\n");
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
-		printf("4 %d\n", numSeqReady);
-		
-
 	}
-	printf("5 %d\n", numSeqReady);
 
 	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
 	if(numSeqReady != 0){
