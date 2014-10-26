@@ -134,9 +134,9 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 			}
 		}
 		d_lMax_S[tid] = lMin_R;
-		if(lMin_R == 4){
+		if(tid == 263){
 			printf("Entrou aqui\n");
-			printf("d_lMax[%d] - %d", tid, d_lMax_S[tid]);
+			printf("d_lMax[%d] - %d\n", tid, d_lMax_S[tid]);
 		}
 		
 	}
