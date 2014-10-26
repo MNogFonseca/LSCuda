@@ -102,7 +102,6 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 				
 				lLIS = LIS(s_vet + s_index, last, MP, length);
 				if(lLIS < lMin_R){
-					//printVector(s_vet + s_index, length);
 					lMin_R = lLIS;	
 				}
 
@@ -136,6 +135,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 		if(lMin_R == 5){
 			printf("Entrou aqui\n");
 		}
+		printf("[%d] - %d -> %d", tid, d_lMax_S, lMin_R);
 		d_lMax_S[tid] = lMin_R;		
 	}
 }
