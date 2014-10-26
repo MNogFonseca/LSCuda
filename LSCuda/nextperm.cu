@@ -199,7 +199,7 @@ int main(int argc, char *argv[]){
 	//Gera a sequência primária, de menor ordem léxica	
 	for(int i = 0; i < length; i++)
 		h_sequence[i] = i+1;
-prinf("NUMSEQ %d\n", numSeqReady);
+printf("NUMSEQ %d\n", numSeqReady);
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas
 	//char lMax_S = 0; //Resultado final, maior valor encontrado do grupo S
 
@@ -212,9 +212,9 @@ prinf("NUMSEQ %d\n", numSeqReady);
 	unsigned long counter = fatorial(length-1)/2 -1;
 	unsigned long counterMax = counter;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	prinf("NUMSEQ %d\n", numSeqReady);
+	printf("NUMSEQ %d\n", numSeqReady);
 	while(counter){
-		prinf("NUMSEQ %d\n", numSeqReady);
+		printf("NUMSEQ %d\n", numSeqReady);
 		//Gera todos os pivores do conjunto R
 		memcpy(h_threadSequences + numSeqReady*step_element,
 			   h_sequence, length);
