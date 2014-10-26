@@ -129,8 +129,11 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLDS <= d_lMax_S[tid])
+				if(lLDS <= d_lMax_S[tid]){
+					printf("Saiu LDS\n");
 					return;
+				}
+				
 				printf("Rotation Enter\n");
 				rotation(s_vet + s_index, length);
 				printf("Rotation Saiu\n");
@@ -237,7 +240,7 @@ int main(int argc, char *argv[]){
 		
 		if((counterMax - counter)%(counterMax/100+1) == 0){
 			end = clock();
-			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
+			//printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
 		}
 	}
 
