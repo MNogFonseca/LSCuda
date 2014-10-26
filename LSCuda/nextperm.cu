@@ -106,7 +106,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 
 		char lLIS, lLDS; 
 		char lMin_R = 127;
-		printf("%d\n,lMin_R");
+		printf("%d\n",lMin_R);
 		for(int j = 0; j < 2; j++){ //Inverção
 			for(int i = 0; i < length; i++){
 				
