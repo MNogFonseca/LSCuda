@@ -96,7 +96,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = step_seq*threadIdx.x; //Indice da shared memory
 	if(tid < numThread){
-		printf("threadId: %d",tid);
+		printf("d_lMax_S[%d]: %d\n\n",tid,d_lMax_S[tid]);
 		for(int i = 0; i < step_seq; i++){
 			s_vet[s_index+i] = vector[tid*step_seq+i];
 		}
@@ -130,7 +130,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				}
 
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				printf("d_lMax_S: %d\n\n",d_lMax_S[tid]);
+				
 
 				if(lLDS <= d_lMax_S[tid]){
 					printf("Saiu LDS\n\n");
@@ -147,7 +147,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread, int step_
 				inversion(s_vet + s_index, length);
 			}
 		}
-		printf("lMIN_R %d\n",lMin_R);
+		
 		d_lMax_S[tid] = lMin_R;
 	}
 }
