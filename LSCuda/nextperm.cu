@@ -140,6 +140,9 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 		}
 		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
 		//Que o minimo local encontrado até o momento.
+		if(lMin_R == 6){
+			printVector(s_vet+s_index, length);
+		}
 		d_lMax_S[tid] = lMin_R;		
 	}
 }
