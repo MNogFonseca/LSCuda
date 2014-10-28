@@ -117,6 +117,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 					return;				
 				}
 
+				/*
 				lLDS = LDS(s_vet + s_index, last, MP, length);
 				//caso seja menor que o minimo do conjunto R, então modificar o valor
 				if(lLDS < lMin_R){				
@@ -126,7 +127,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 				if(lLDS <= d_lMax_S[tid]){
 					return;
-				}
+				}*/
 
 				rotation(s_vet + s_index, length);
 			}
