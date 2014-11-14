@@ -66,10 +66,11 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
-		lMin_R = 27; //Variavel que representa o min encontrado no conjunto R
+		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
 			lLIS = LIS(s_vet + s_index, last, MP, length);
+
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLIS < lMin_R){
 				lMin_R = lLIS;	
@@ -94,8 +95,16 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 		}
 		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
 		//Que o minimo local encontrado até o momento.
-		if(flagFinalLoop)
-			d_lMax_S[tid] = lMin_R;		
+		if(flagFinalLoop){
+			d_lMax_S[tid] = lMin_R;
+			if(lMin_R == 127){
+				printf("%d -->",indexSeq);
+				for(int i = 0; i < length; i++){
+					printf("%d -", s_vet[s_index+i];
+				}
+				printf("\n");
+			}
+		}
 		indexSeq += numThreads;
 	}
 }
