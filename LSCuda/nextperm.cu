@@ -69,7 +69,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
 			lLIS = LIS(s_vet + s_index, last, MP, length);
-
+			printf("%d\n",lLIS);
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLIS < lMin_R){
 				lMin_R = lLIS;	
@@ -81,6 +81,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 			}
 	
 			lLDS = LDS(s_vet + s_index, last, MP, length);
+			printf("%d\n",lLDS);
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLDS < lMin_R){				
 				lMin_R = lLDS;
