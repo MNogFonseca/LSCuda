@@ -169,7 +169,7 @@ int main(int argc, char *argv[]){
 	//Aloca memória dos vetores	
 	//h_sequence = (char*) malloc(length);
 	//h_threadSequences = (char*) malloc(length*NUM_THREADS);
-	h_lMax_loca,lS = (char*) malloc(NUM_THREADS);
+	//h_lMax_localS = (char*) malloc(NUM_THREADS);
 	cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaMalloc(&d_lMax_localS, NUM_THREADS);
 	cudaMemset(d_lMax_localS, 0, NUM_THREADS);
