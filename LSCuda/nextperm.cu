@@ -108,7 +108,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 		indexSeq += numThreads;
 	}
 
-	__synchtrads();
+	__syncthreads();
 	if(tid == 0){
 		for(int k = 0; k < numThreads; k++){
 			for(int i = 0; i < 10; i++)
@@ -137,7 +137,6 @@ void calcLMaxGlobalS(char* lMax_globalS, char* lMax_localS, int tamVec){
 int main(int argc, char *argv[]){
 	//char* h_sequence;            //Vetor com a sequência pivor do grupo
 	//char* h_threadSequences;      //Vetor com as sequências criadas
-	char* d_threadSequences;	    //Sequências produzidas para enviar para o device
 	char* d_lMax_localS;      //Vetor com os máximos locais de S, cada thread tem um máximo local
 	char* h_lMax_localS;      
 
