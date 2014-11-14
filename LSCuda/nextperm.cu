@@ -108,7 +108,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 		indexSeq += numThreads;
 	}
 
-	__synchtrads();
+	__synchtreads();
 	if(tid == 0){
 		for(int k = 0; k < numThreads; k++){
 			for(int i = 0; i < 10; i++)
