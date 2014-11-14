@@ -130,7 +130,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq){
 		//Que o minimo local encontrado até o momento.
 		if(flagFinalLoop)
 			d_lMax_S[tid] = lMin_R;		
-		numSeq += tid;
+		indexSeq += tid;
 	}
 }
 
@@ -198,8 +198,6 @@ int main(int argc, char *argv[]){
 
 	printf("Lmax R = %d\n",lMax_globalS);
 
-	free(h_sequence);
-	free(h_threadSequences);
 	free(h_lMax_localS);
 	cudaFree(d_threadSequences);
 	cudaFree(d_lMax_localS);
