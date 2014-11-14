@@ -63,7 +63,6 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 	char lLIS, lLDS;
 	char lMin_R;
 	bool flagFinalLoop;
-	printf("eNTROU\n");
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
 		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
@@ -125,6 +124,7 @@ void calcLMaxGlobalS(char* lMax_globalS, char* lMax_localS, int tamVec){
 		if(*lMax_globalS < lMax_localS[i]){
 			*lMax_globalS = lMax_localS[i];
 		}
+		printf("%d\n",lMax_localS[i]);
 	}
 }
 
