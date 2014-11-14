@@ -82,7 +82,7 @@ unsigned long fatorialHost(unsigned long n){
 //Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
 //Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
 __global__
-void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq){
+void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThreads){
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
@@ -130,7 +130,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq){
 		//Que o minimo local encontrado até o momento.
 		if(flagFinalLoop)
 			d_lMax_S[tid] = lMin_R;		
-		indexSeq += tid;
+		indexSeq += numThreads;
 	}
 }
 
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]){
 	//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
 	//insere na variável
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_threadSequences, d_lMax_localS, length, numSeq);
+		   (d_threadSequences, d_lMax_localS, length, numSeq, NUM_THREADS);
 
 	cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
 
