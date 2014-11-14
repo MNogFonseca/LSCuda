@@ -49,7 +49,7 @@ unsigned long fatorialHost(unsigned long n){
 //Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
 //Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
 __global__
-void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThreads){
+void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
@@ -63,7 +63,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 	char lLIS, lLDS;
 	char lMin_R;
 	bool flagFinalLoop;
-		printf("eNTROU\n");
+	printf("eNTROU\n");
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
 		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
@@ -108,7 +108,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 		indexSeq += numThreads;
 	}
 
-	__syncthreads();
+	__synchtrads();
 	if(tid == 0){
 		for(int k = 0; k < numThreads; k++){
 			for(int i = 0; i < 10; i++)
@@ -153,14 +153,14 @@ int main(int argc, char *argv[]){
 	//h_sequence = (char*) malloc(length);
 	//h_threadSequences = (char*) malloc(length*NUM_THREADS);
 	h_lMax_localS = (char*) malloc(NUM_THREADS);
-	cudaMalloc(&d_threadSequences, length*NUM_THREADS);
+	//cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaMalloc(&d_lMax_localS, NUM_THREADS);
 	cudaMemset(d_lMax_localS, 0, NUM_THREADS);
 
 	start = clock();
 	
 
-	unsigned long numSeq = fatorialHost(length-1)/2 -1;
+	unsigned long numSeq = fatorialHost(length-1)/2;
 	
 	dim3 num_blocks(ceil(((float) NUM_THREADS)/(float) THREAD_PER_BLOCK));
 	int tam_shared = length*THREAD_PER_BLOCK;
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]){
 	//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
 	//insere na variável
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_threadSequences, d_lMax_localS, length, numSeq, NUM_THREADS);
+		   (d_lMax_localS, length, numSeq, NUM_THREADS);
 
 	cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
 
@@ -183,6 +183,6 @@ int main(int argc, char *argv[]){
 	printf("Lmax R = %d\n",lMax_globalS);
 
 	free(h_lMax_localS);
-	cudaFree(d_threadSequences);
+	//cudaFree(d_threadSequences);
 	cudaFree(d_lMax_localS);
 }
