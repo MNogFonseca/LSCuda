@@ -49,7 +49,7 @@ unsigned long fatorialHost(unsigned long n){
 //Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
 //Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
 __global__
-void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
+void decideLS(char* d_lMax_S, int length, unsigned long maxSeq, int numThreads){
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
@@ -69,7 +69,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
 			lLIS = LIS(s_vet + s_index, last, MP, length);
-			printf("%d\n",lLIS);
+
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLIS < lMin_R){
 				lMin_R = lLIS;	
@@ -81,7 +81,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 			}
 	
 			lLDS = LDS(s_vet + s_index, last, MP, length);
-			printf("%d\n",lLDS);
+
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLDS < lMin_R){				
 				lMin_R = lLDS;
@@ -91,7 +91,6 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 				flagFinalLoop = false;
 				break;
 			}
-			return;
 			rotation(s_vet + s_index, length);
 		}
 		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
