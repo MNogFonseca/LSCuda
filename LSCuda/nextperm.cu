@@ -108,6 +108,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 	}
 
 	__syncthreads();
+	printf("Final\n");
 	if(tid == 0){
 		for(int k = 0; k < numThreads; k++){
 			for(int i = 0; i < 10; i++)
@@ -124,7 +125,6 @@ void calcLMaxGlobalS(char* lMax_globalS, char* lMax_localS, int tamVec){
 		if(*lMax_globalS < lMax_localS[i]){
 			*lMax_globalS = lMax_localS[i];
 		}
-		printf("%d\n",lMax_localS[i]);
 	}
 }
 
