@@ -91,6 +91,7 @@ void decideLS(char* d_lMax_S, int length, int maxSeq, int numThreads){
 				flagFinalLoop = false;
 				break;
 			}
+			return;
 			rotation(s_vet + s_index, length);
 		}
 		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
