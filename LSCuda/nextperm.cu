@@ -100,7 +100,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 			if(lMin_R == 127){
 				printf("%d -->",indexSeq);
 				for(int i = 0; i < length; i++){
-					printf("%d -", s_vet[s_index+i];
+					printf("%d -", s_vet[s_index+i]);
 				}
 				printf("\n");
 			}
