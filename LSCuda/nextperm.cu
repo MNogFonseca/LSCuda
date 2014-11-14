@@ -97,25 +97,8 @@ void decideLS(char* d_lMax_S, int length, unsigned long maxSeq, int numThreads){
 		//Que o minimo local encontrado até o momento.
 		if(flagFinalLoop){
 			d_lMax_S[tid] = lMin_R;
-			if(lMin_R == 127){
-				printf("%d -->",indexSeq);
-				for(int i = 0; i < length; i++){
-					printf("%d -", s_vet[s_index+i]);
-				}
-				printf("\n");
-			}
 		}
 		indexSeq += numThreads;
-	}
-
-	__syncthreads();
-	printf("Final\n");
-	if(tid == 0){
-		for(int k = 0; k < numThreads; k++){
-			for(int i = 0; i < 10; i++)
-				printf("%d -->\n",d_lMax_S[k]);
-			printf("\n");
-		}
 	}
 }
 
