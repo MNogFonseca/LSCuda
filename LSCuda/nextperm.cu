@@ -98,8 +98,9 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 	bool flagFinalLoop;
 
 	while(indexSeq < maxSeq){
+		printf("Sem sequência\n");
 		getSequence(s_vet + s_index, length, indexSeq);
-			
+		printf("Com sequência\n");
 		lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
@@ -130,7 +131,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 		//Que o minimo local encontrado até o momento.
 		if(flagFinalLoop)
 			d_lMax_S[tid] = lMin_R;
-		printf("%d -> %d %d %d %d %d %d %d %d %d %d",indexSeq,s_vet[s_index],s_vet[s_index+1],s_vet[s_index+2],s_vet[s_index+3],s_vet[s_index+4],s_vet[s_index+5],s_vet[s_index+6],s_vet[s_index+7],s_vet[s_index+8],s_vet[s_index+9]); 		
+		printf("%d -> %d %d %d %d %d %d %d %d %d %d\n",indexSeq,s_vet[s_index],s_vet[s_index+1],s_vet[s_index+2],s_vet[s_index+3],s_vet[s_index+4],s_vet[s_index+5],s_vet[s_index+6],s_vet[s_index+7],s_vet[s_index+8],s_vet[s_index+9]); 		
 		indexSeq += numThreads;
 	}
 }
@@ -169,7 +170,7 @@ int main(int argc, char *argv[]){
 	//Aloca memória dos vetores	
 	//h_sequence = (char*) malloc(length);
 	//h_threadSequences = (char*) malloc(length*NUM_THREADS);
-	//h_lMax_localS = (char*) malloc(NUM_THREADS);
+	h_lMax_localS = (char*) malloc(NUM_THREADS);
 	cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaMalloc(&d_lMax_localS, NUM_THREADS);
 	cudaMemset(d_lMax_localS, 0, NUM_THREADS);
