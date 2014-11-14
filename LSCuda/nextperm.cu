@@ -94,7 +94,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq){
 	char last[N]; //Vetor de last de MP
 	//Valores com os resultados encontrados no LIS e no LDS
 	char lLIS, lLDS;
-	char lMin_R
+	char lMin_R;
 	bool flagFinalLoop;
 
 	while(indexSeq < maxSeq){
