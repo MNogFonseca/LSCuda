@@ -36,39 +36,6 @@ void rotation(char *array, int length){
      array[i] = array[i+1];
   array[i] = temp;
 }
-/*
-//faz a proxima permutação na ordem lexicográfica
-int next_permutation(char *array, size_t length) {
-	size_t i, j;
-	char temp;
-	// Find non-increasing suffix
-	if (length == 0)
-		return 0;
-	i = length - 1;
-	while (i > 0 && array[i - 1] >= array[i])
-		i--;
-	if (i == 0)
-		return 0;
-	
-	// Find successor to pivot
-	j = length - 1;
-	while (array[j] <= array[i - 1])
-		j--;
-	temp = array[i - 1];
-	array[i - 1] = array[j];
-	array[j] = temp;
-	
-	// Reverse suffix
-	j = length - 1;
-	while (i < j) {
-		temp = array[i];
-		array[i] = array[j];
-		array[j] = temp;
-		i++;
-		j--;
-	}
-	return 1;
-}*/
 
 unsigned long fatorialHost(unsigned long n){
 	int i;
@@ -86,7 +53,7 @@ void decideLS(char *vector, char* d_lMax_S, int length, int maxSeq, int numThrea
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
-	int indexSeq = tid;
+	unsigned long int indexSeq = tid;
 
 	//Esses dois vetores são utilizados no LIS e no LDS, são declarados do lado de fora para
 	//gastar menos memória e não ter necessidade de dar malloc.
