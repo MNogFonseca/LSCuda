@@ -1,33 +1,21 @@
-#define STACKSIZE 32768    /* tamanho de pilha das threads */
-#define _XOPEN_SOURCE 600  /* para compilar no MacOS */
-
-
 #include <stddef.h>
 #include <stdio.h>
 #include "LIS.c"
 #include "LDS.c"
 #include <time.h>
+#include <string.h>
 #include "EnumaratorSequence.cu"
 
 
-void inversion(int *array, int length){
-	int i;
-	for(i = 0; i < length/2; i++){
-		int temp = array[i];
-		array[i] = array[length - i-1];
-		array[length-i-1] = temp;
-	}
-}
-
-void rotation(int *array, int length){
-  int i, temp;
-  temp = array[0];
+void rotation(char *array, int length){
+  int i;
+  char temp = array[0];
   for (i = 0; i < length-1; i++)
      array[i] = array[i+1];
   array[i] = temp;
 }
 
-int next_permutation(int *array, size_t length) {
+int next_permutation(char *array, size_t length) {
 	size_t i, j;
 	int temp;
 	// Find non-increasing suffix
@@ -59,34 +47,12 @@ int next_permutation(int *array, size_t length) {
 	return 1;
 }
 
-void printVector(int* array, int length){
+void printVector(char* array, int length){
 	int k;
 	for(k = 0; k < length; k++){
 		printf("%d - ",array[k]);	
 	}
 	printf("\n");
-}
-
-//Min(|LIS(s)|, |LDS(s)|)
-
-void decideLS(int *vector, int length, int* lmin){
-	
-	unsigned int lLIS, lLDS, latual; 
-	
-	lLIS = LIS(vector, length);
-	lLDS = LDS(vector, length);
-	
-	//printf("lLIS = %d, lLDS = %d , Lmin = %d\n",lLIS, lLDS,  *lmin);
-
-	if(lLIS < *lmin){
-		
-		*lmin = lLIS;
-	}
-
-	if(lLDS < *lmin){
-		*lmin = lLDS;	
-	}
-	
 }
 
 //Seja S o conjunto de todas las sequencias dos n primeiros números naturais.
@@ -95,24 +61,17 @@ void decideLS(int *vector, int length, int* lmin){
 //Defina LIS(s) e LDS(s) como você sabe e sejam |LIS(s)| e |LDS(s)| suas
 //cardinalidades.
 //Determinar Max_{s \in S}(Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)))
-
-
 int main(int argc, char* argv[]){
-	int* vector;
-	int* vecRotation;
-	int* vecInversion;	
+	char* vector;
+	char* vecRotation;
+	
 	int length = atoi(argv[1]);
-	int lR_expected = atoi(argv[2]);
+	//	int lR_expected = atoi(argv[2]);
 	int num_expected = 0;
 	clock_t start,end;
-
-	printf("%lu\n", sizeof(int));
-	printf("%lu\n", sizeof(long));
-	printf("%lu\n", sizeof(long long));
 	
-	vector = (int*) malloc(sizeof(int)*length);
-	vecRotation = (int*) malloc(sizeof(int)*length);
-	vecInversion = (int*) malloc(sizeof(int)*length);
+	vector = (char*) malloc(length);
+	vecRotation = (char*) malloc(length);
 
 	start = clock();
 	
@@ -125,55 +84,60 @@ int main(int argc, char* argv[]){
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
 	int counter = fatorial(length-1)/2;
 	printf("counter: %d\n",counter);
+	int flag = 1;
+    //Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 
-        //Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	//
+	unsigned int lLIS, lLDS;
 	while(counter){
+		counter--;
+		next_permutation(vector+1,length-1);
+
 		unsigned int lminR = length;	
-		//printf("Permutação: ");
-		//printVector(vector,length);
-		decideLS(vector, length, &lminR);
+		
+		lminR = LIS(vector, length);
 
-		memcpy(vecInversion,vector, sizeof(int)*length);
-		inversion(vecInversion, length);
-		//printf("Inversão: ");
-		//printVector(vecInversion,length);
-		decideLS(vecInversion, length, &lminR);
+		if(lminR <= lmaxS)
+			continue;
 
-		memcpy(vecRotation,vector, sizeof(int)*length);
+		lLDS = LDS(vector, length);
+		
+
+		if(lLDS < lminR)
+			lminR = lLDS;
+
+		if(lLDS <= lmaxS)
+			continue;
+
+		memcpy(vecRotation,vector,length);
 		for(i = 0; i < length-1; i++){
 			rotation(vecRotation, length);
-			//printf("Rotações: ");
-			//printVector(vecRotation, length);
-			decideLS(vecRotation, length, &lminR);
 
+			lLIS = LIS(vecRotation, length);
 
-			memcpy(vecInversion,vecRotation, sizeof(int)*length);
-			inversion(vecInversion, length);
-			//printf("Inversão: ");
-			//printVector(vecInversion,length);
-			decideLS(vecInversion, length, &lminR);
+			if(lLIS < lminR)
+				lminR = lLIS;
+
+			if(lLIS <= lmaxS)
+				break;
+
+			lLDS = LDS(vecRotation, length);
+			
+			if(lLDS < lminR)
+				lminR = lLDS;
+
+			if(lLDS <= lmaxS)
+				break;			
 		}
-
-		if(lminR == lR_expected){
-			num_expected++;
-			printf("Id: %d ---", getIndex(vector,length));
-			printVector(vector, length);
-		}
+		
 		//Define o maior valor encontrado entre os elementos de S
 		if(lmaxS < lminR){
 			lmaxS = lminR;
 		}
-
-		next_permutation(vector+1,length-1);
-		//printf("\n");
-		counter--;
 	}
 	end = clock();
-	printf("Número encontrado: %d\n",num_expected);
-	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
-	printf("Lmax R = %d\n",lmaxS);
+	
+	printf("%d -> Tempo: %f s\n",length, (float)(end-start)/CLOCKS_PER_SEC);
+	printf("Lmax S = %d\n",lmaxS);
 	free(vector);
-	free(vecInversion);
 	free(vecRotation);
 }

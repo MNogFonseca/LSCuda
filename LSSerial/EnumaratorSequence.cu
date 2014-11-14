@@ -41,31 +41,22 @@ void getSequence(int* dest, int n, int index){
 	}
 }
 
-int getIndex(int* vet, int n){
+int qtdMenores(int* vet, int num, int n){
+	int qtd = 0;
 	int i;
-	int index = 0;
-	int elementoCerto = 1;
+	for(i = 0; i < n; i++){
+		if(vet[i] < num)
+			qtd++;
+	}
+	return qtd;
+}
+
+unsigned long getIndex(int* vet, int n){
+	int i;
+	unsigned long index = 0;
+
 	for(i = 0; i < n-1; i++){
-		if(vet[i] != elementoCerto){
-			index += (vet[i]-(i+1))*fatorial(n-i-1);
-			printf("vet[%d] = %d - index: %d\n", i, vet[i], index);
-		}
-		else{
-			elementoCerto++;
-		}
+		index += qtdMenores(vet+i+1, vet[i], n-i-1)*fatorial(n-i-1);
 	}
 	return index;
 }
-
-1 2 3 5 4
-0
-0
-0
-1
-
-1 2 4 3 5
-0
-0
-2
-
-

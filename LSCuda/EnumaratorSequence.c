@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-__device__
 unsigned long fatorial(int n){
 	unsigned long result = 1;
 	int i;
@@ -12,7 +11,6 @@ unsigned long fatorial(int n){
 }
 
 //Coloca o elemento da variável pos na primeira posição, e da um shift para a direia nos outros
-__device__
 void shiftElement(char* dest, int pos){
 	char temp = dest[pos];
 	int i;
@@ -22,7 +20,6 @@ void shiftElement(char* dest, int pos){
 	dest[0] = temp;
 }
 
-__device__
 void getSequenceLexicographically(char* dest, int n, unsigned long index){
 	//Cria o vetor primário de tamanho N
 	int i;
@@ -44,7 +41,6 @@ void getSequenceLexicographically(char* dest, int n, unsigned long index){
 	}
 }
 
-__device__
 void getSequence(char* dest, int n, unsigned long index){
 	int numDeslocamentos2e3 = index/fatorial(n-3);
 	int indexResto = index%fatorial(n-3);
@@ -85,7 +81,6 @@ void getSequence(char* dest, int n, unsigned long index){
 
 
 //Pega a quantidade de valores menores que num na variável vet.
-__device__
 int qtdMenores(char* vet, int num, int n){
 	int qtd = 0;
 	int i;
@@ -96,7 +91,6 @@ int qtdMenores(char* vet, int num, int n){
 	return qtd;
 }
 
-__device__
 unsigned long getIndexLexicographically(char* vet, int n){
 	unsigned long index = 0;
 	int i;
@@ -106,7 +100,6 @@ unsigned long getIndexLexicographically(char* vet, int n){
 	return index;
 }
 
-__device__
 unsigned long getIndex(char* vet, int n){
 	unsigned long index = 0;
 	int i;
@@ -145,7 +138,7 @@ unsigned long getIndex(char* vet, int n){
 
 	return index;
 }
-/*
+
 int main(){
 	char vetor[6];
 	int i = 0;
@@ -157,5 +150,4 @@ int main(){
 		}
 		printf("= %lu\n", getIndex(vetor, 6));
 	}
-}*/
-
+}
