@@ -70,7 +70,7 @@ int next_permutation(char *array, size_t length) {
 	return 1;
 }*/
 
-unsigned long fatorial(unsigned long n){
+unsigned long fatorialHost(unsigned long n){
 	int i;
 	unsigned long result = 1;
 	for(i = n; i > 1; i--){
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]){
 	start = clock();
 	
 
-	unsigned long numSeq = fatorial(length-1)/2 -1;
+	unsigned long numSeq = fatorialHost(length-1)/2 -1;
 	
 	dim3 num_blocks(ceil(((float) NUM_THREADS)/(float) THREAD_PER_BLOCK));
 	int tam_shared = length*THREAD_PER_BLOCK;
