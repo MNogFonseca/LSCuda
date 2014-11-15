@@ -51,6 +51,7 @@ unsigned long long fatorialHost(unsigned long long n){
 __global__
 void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThreads){
 	extern __shared__ char s_vet[];
+	printf("entra aqui d boa?\n");
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
 	unsigned long long int indexSeq = tid;
