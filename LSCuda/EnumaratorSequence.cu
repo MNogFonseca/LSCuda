@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 __device__
-unsigned long fatorial(int n){
-	unsigned long result = 1;
+unsigned long long fatorial(int n){
+	unsigned long long result = 1;
 	int i;
 	for(i = n; i > 1; i--){
 		result *= i;
@@ -23,7 +23,7 @@ void shiftElement(char* dest, int pos){
 }
 
 __device__
-void getSequenceLexicographically(char* dest, int n, unsigned long index){
+void getSequenceLexicographically(char* dest, int n, unsigned long long index){
 	//Cria o vetor primário de tamanho N
 	int i;
 	for(i = 0; i < n; i++)
@@ -32,7 +32,7 @@ void getSequenceLexicographically(char* dest, int n, unsigned long index){
 	//Percorre o vetor
 	for(i = 0; i < n-1; i++){
 		//Calcula quantas alterações são possiveis sem alterar o primeiro elemento atual
-		unsigned long fat = fatorial(n-i-1);
+		unsigned long long fat = fatorial(n-i-1);
 		//Calcula quantas vezes foi possível trocar essa posição
 		int num_movimentos = index/fat;
 		if(num_movimentos > 0){
@@ -45,7 +45,7 @@ void getSequenceLexicographically(char* dest, int n, unsigned long index){
 }
 
 __device__
-void getSequence(char* dest, int n, unsigned long index){
+void getSequence(char* dest, int n, unsigned long long index){
 	int numDeslocamentos2e3 = index/fatorial(n-3);
 	int indexResto = index%fatorial(n-3);
 	
@@ -97,8 +97,8 @@ int qtdMenores(char* vet, int num, int n){
 }
 
 __device__
-unsigned long getIndexLexicographically(char* vet, int n){
-	unsigned long index = 0;
+unsigned long long getIndexLexicographically(char* vet, int n){
+	unsigned long long index = 0;
 	int i;
 	for(i = 0; i < n-1; i++){
 		index += qtdMenores(vet+i+1, vet[i], n-i-1)*fatorial(n-i-1);
@@ -107,8 +107,8 @@ unsigned long getIndexLexicographically(char* vet, int n){
 }
 
 __device__
-unsigned long getIndex(char* vet, int n){
-	unsigned long index = 0;
+unsigned long long getIndex(char* vet, int n){
+	unsigned long long index = 0;
 	int i;
 	int pos_num2 = -1, pos_num3 = -1;
 
