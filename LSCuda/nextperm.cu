@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
-#define N 16
+#define N 17
 
 __device__
 void printVector(char* array, int length){
@@ -62,12 +62,12 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	//Valores com os resultados encontrados no LIS e no LDS
 	char lLIS, lLDS;
 	char lMin_R;
-	char flagFinalLoop;
+	bool flagFinalLoop;
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
 		
 		lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
-		flagFinalLoop = 1;
+		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
 			lLIS = LIS(s_vet + s_index, last, MP, length);
 
@@ -77,7 +77,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 			}
 			//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 			if(lLIS <= d_lMax_S[tid]){
-				flagFinalLoop = 0;
+				flagFinalLoop = false;
 				break;				
 			}
 	
@@ -89,14 +89,14 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 			}
 			//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
 			if(lLDS <= d_lMax_S[tid]){
-				flagFinalLoop = 0;
+				flagFinalLoop = false;
 				break;
 			}
 			rotation(s_vet + s_index, length);
 		}
 		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
 		//Que o minimo local encontrado até o momento.
-		if(flagFinalLoop == 1){
+		if(flagFinalLoop){
 			d_lMax_S[tid] = lMin_R;
 		}
 		indexSeq += numThreads;
