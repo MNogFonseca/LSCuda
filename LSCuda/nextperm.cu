@@ -7,7 +7,7 @@
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
-#define N 17
+#define N 16
 
 __device__
 void printVector(char* array, int length){
@@ -66,10 +66,10 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
 		
-		lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
+		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
-			lLIS = LIS(s_vet + s_index, last, MP, length);
+			lLIS = 21;//LIS(s_vet + s_index, last, MP, length);
 
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLIS < lMin_R){
@@ -81,7 +81,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 				break;				
 			}
 	
-			lLDS = LDS(s_vet + s_index, last, MP, length);
+			lLDS = 21;//LDS(s_vet + s_index, last, MP, length);
 
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLDS < lMin_R){				
