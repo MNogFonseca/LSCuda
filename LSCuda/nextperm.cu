@@ -63,7 +63,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	char lLIS, lLDS;
 	char lMin_R;
 	bool flagFinalLoop;
-	while(indexSeq < maxSeq){
+	while(indexSeq < maxSeq*0.9){
 		getSequence(s_vet + s_index, length, indexSeq);
 		
 		lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
