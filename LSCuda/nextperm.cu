@@ -99,7 +99,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 		if(flagFinalLoop){
 			d_lMax_S[tid] = lMin_R;
 		}
-		indexSeq += numThreads;
+		indexSeq += (unsigned long long) numThreads;
 	}
 }
 
