@@ -48,7 +48,6 @@ __device__
 void getSequence(char* dest, int n, unsigned long long index){
 	int numDeslocamentos2e3 = index/fatorial(n-3);
 	int indexResto = index%fatorial(n-3);
-	
 	int pos_num2 = 1;
 	int pos_num3;
 	int i;
@@ -145,17 +144,3 @@ unsigned long long getIndex(char* vet, int n){
 
 	return index;
 }
-/*
-int main(){
-	char vetor[6];
-	int i = 0;
-	for(; i < 60; i++){
-		getSequence(vetor, 6, i);
-		int j = 0;
-		for(; j < 6; j++){
-			printf("%d - ",vetor[j]);
-		}
-		printf("= %lu\n", getIndex(vetor, 6));
-	}
-}*/
-
