@@ -66,9 +66,6 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
 		
-		if(indexSeq > 20000000)
-			break;
-
 		lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
