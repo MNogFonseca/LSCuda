@@ -65,7 +65,13 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	bool flagFinalLoop;
 	while(indexSeq < maxSeq){
 		getSequence(s_vet + s_index, length, indexSeq);
-		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
+
+		for(int i = 0; i < length; i++){
+			printf("%d - ", s_vet[s_index+i]);
+		}
+		printf("\n");
+
+		lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
 			lLIS = LIS(s_vet + s_index, last, MP, length);
