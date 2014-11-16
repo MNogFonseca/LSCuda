@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 	start = clock();
 	
 
-	unsigned long long numSeq = fatorialHost(length-1)/2;
+	unsigned long long numSeq = 200000;//fatorialHost(length-1)/2;
 	
 	dim3 num_blocks(ceil(((float) NUM_THREADS)/(float) THREAD_PER_BLOCK));
 	int tam_shared = length*THREAD_PER_BLOCK;
