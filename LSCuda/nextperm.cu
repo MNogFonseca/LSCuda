@@ -64,9 +64,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	char lMin_R;
 	bool flagFinalLoop;
 	while(indexSeq < maxSeq){
-		printf("%llu\n",indexSeq);
 		getSequence(s_vet + s_index, length, indexSeq);
-		printVector(s_vet + s_index, length);
 		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
