@@ -64,12 +64,12 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 	char lMin_R;
 	bool flagFinalLoop;
 	while(indexSeq < maxSeq){
-		//getSequence(s_vet + s_index, length, indexSeq);
+		getSequence(s_vet + s_index, length, indexSeq);
 		
 		lMin_R = 20; //Variavel que representa o min encontrado no conjunto R
 		flagFinalLoop = true;
 		for(int i = 0; i < length; i++){ //Rotação
-			lLIS = 21;//LIS(s_vet + s_index, last, MP, length);
+			lLIS = LIS(s_vet + s_index, last, MP, length);
 
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLIS < lMin_R){
@@ -81,7 +81,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 				break;				
 			}
 	
-			lLDS = 21;//LDS(s_vet + s_index, last, MP, length);
+			lLDS = LDS(s_vet + s_index, last, MP, length);
 
 			//caso seja menor que o minimo do conjunto R, então modificar o valor
 			if(lLDS < lMin_R){				
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 	start = clock();
 	
 
-	unsigned long long numSeq = fatorialHost(length-1)/2;
+	unsigned long long numSeq = fatorialHost(length-1)/4;
 	
 	dim3 num_blocks(ceil(((float) NUM_THREADS)/(float) THREAD_PER_BLOCK));
 	int tam_shared = length*THREAD_PER_BLOCK;
