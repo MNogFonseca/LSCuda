@@ -6,7 +6,7 @@
 #include <time.h>
 
 //#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 1
+#define THREAD_PER_BLOCK 128
 #define N 16
 
 __device__
@@ -100,7 +100,7 @@ void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThre
 		if(flagFinalLoop){
 			d_lMax_S[tid] = lMin_R;
 		}
-		indexSeq += numThreads+100000000;
+		indexSeq += numThreads;
 	}
 }
 
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]){
 	start = clock();
 	
 
-	unsigned long long numSeq = 20000000000;//fatorialHost(length-1)/2;
+	unsigned long long numSeq = fatorialHost(length-1)/2;
 	
 	dim3 num_blocks(ceil(((float) NUM_THREADS)/(float) THREAD_PER_BLOCK));
 	int tam_shared = length*THREAD_PER_BLOCK;
