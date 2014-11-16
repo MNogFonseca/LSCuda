@@ -46,10 +46,10 @@ void getSequenceLexicographically(char* dest, int n, unsigned long long index){
 
 __device__
 void getSequence(char* dest, int n, unsigned long long index){
-	int numDeslocamentos2e3 = index/fatorial(n-3);
-	int indexResto = index%fatorial(n-3);
-	int pos_num2 = 1;
-	int pos_num3;
+	unsigned int numDeslocamentos2e3 = index/fatorial(n-3);
+	unsigned int indexResto = index%fatorial(n-3);
+	unsigned int pos_num2 = 1;
+	unsigned int pos_num3;
 	int i;
 	
 	for(i = 0; numDeslocamentos2e3; i++){
