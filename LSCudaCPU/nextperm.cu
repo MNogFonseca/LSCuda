@@ -214,10 +214,10 @@ int main(int argc, char *argv[]){
 		next_permutation(h_sequence+1,length-1);
 		counter--;
 		
-		if((counterMax - counter)%(counterMax/100+1) == 0){
+		/*if((counterMax - counter)%(counterMax/100+1) == 0){
 			end = clock();
 			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
-		}
+		}*/
 	}
 
 	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
