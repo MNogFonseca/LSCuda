@@ -161,8 +161,8 @@ int main(int argc, char *argv[]){
 	char* d_lMax_localS;      //Vetor com os máximos locais de S, cada thread tem um máximo local
 	char* h_lMax_localS;      
 
-	int length = N;
-	int NUM_THREADS = atoi(argv[1]);
+	int length = atoi(argv[1]);
+	int NUM_THREADS = atoi(argv[2]);
 	
 	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
