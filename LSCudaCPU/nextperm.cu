@@ -103,41 +103,31 @@ void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
 
 		char lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
 
-		for(int j = 0; j < 2; j++){ //Inverção
-			for(int i = 0; i < length; i++){ //Rotação
+		for(int i = 0; i < length; i++){ //Rotação
 
-				lLIS = LIS(s_vet + s_index, last, MP, length);
-				//caso seja menor que o minimo do conjunto R, então modificar o valor
-				if(lLIS < lMin_R){
-					lMin_R = lLIS;	
-				}
-
-				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLIS <= d_lMax_S[tid]){
-					return;				
-				}
-
-				/*
-				lLDS = LDS(s_vet + s_index, last, MP, length);
-				//caso seja menor que o minimo do conjunto R, então modificar o valor
-				if(lLDS < lMin_R){				
-					lMin_R = lLDS;
-				}
-
-				//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-				if(lLDS <= d_lMax_S[tid]){
-					return;
-				}*/
-
-				rotation(s_vet + s_index, length);
+			lLIS = LIS(s_vet + s_index, last, MP, length);
+			//caso seja menor que o minimo do conjunto R, então modificar o valor
+			if(lLIS < lMin_R){
+				lMin_R = lLIS;	
 			}
 
-			//Não fazer a inverção duas vezes. PENSAR EM METODO MELHOR
-			if(j == 1)
-				break;
-			else{
-				inversion(s_vet + s_index, length);
+			//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
+			if(lLIS <= d_lMax_S[tid]){
+				return;				
 			}
+
+			lLDS = LDS(s_vet + s_index, last, MP, length);
+			//caso seja menor que o minimo do conjunto R, então modificar o valor
+			if(lLDS < lMin_R){				
+				lMin_R = lLDS;
+			}
+
+			//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
+			if(lLDS <= d_lMax_S[tid]){
+				return;
+			}
+
+			rotation(s_vet + s_index, length);
 		}
 		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
 		//Que o minimo local encontrado até o momento.
