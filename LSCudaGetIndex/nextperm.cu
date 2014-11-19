@@ -50,7 +50,7 @@ unsigned long long fatorialHost(unsigned long long n){
 //Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
 //Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
 __global__
-void decideLS(char* d_lMax_S, char* d_index_S,  int length, unsigned long long maxSeq, int numThreads, int initThread){
+void decideLS(char* d_lMax_S, unsigned long long* d_index_S,  int length, unsigned long long maxSeq, int numThreads, int initThread){
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
@@ -195,9 +195,9 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();	
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
-	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
+	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_DEVICE*NUM_THREADS);	
 
-	printf("Menor Indice Encontrado: %llu\n",calcMenorIndex(unsigned long long* indexS, int tamVec));
+	printf("Menor Indice Encontrado: %llu\n",calcMenorIndex(unsigned long long* h_lMax_indexS, NUM_DEVICE*NUM_THREADS));
 	end = clock();
 
 	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
