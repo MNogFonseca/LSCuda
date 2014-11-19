@@ -8,6 +8,7 @@
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
 #define N 16
+#define NUM_DEVICE 2
 
 __device__
 void printVector(char* array, int length){
@@ -49,11 +50,11 @@ unsigned long long fatorialHost(unsigned long long n){
 //Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
 //Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
 __global__
-void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThreads){
+void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThreads, int initThread){
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
-	unsigned long long int indexSeq = tid;
+	unsigned long long int indexSeq = tid+initThread;
 
 	//Esses dois vetores são utilizados no LIS e no LDS, são declarados do lado de fora para
 	//gastar menos memória e não ter necessidade de dar malloc.
@@ -126,7 +127,7 @@ int main(int argc, char *argv[]){
 	char* h_lMax_localS;      
 
 	int length = atoi(argv[1]);
-	int NUM_THREADS = atoi(argv[2]);
+	int NUM_THREADS = NUM_DEVICE*atoi(argv[2]);
 	
 	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
@@ -146,20 +147,34 @@ int main(int argc, char *argv[]){
 
 	unsigned long long numSeq = fatorialHost(length-1)/2;
 	
-	dim3 num_blocks(ceil(((float) NUM_THREADS)/(float) THREAD_PER_BLOCK));
+	dim3 num_blocks(ceil(((float) (NUM_THREADS/NUM_DEVICE))/(float) (THREAD_PER_BLOCK)));
 	int tam_shared = length*THREAD_PER_BLOCK;
 
 	//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
 	//insere na variável
+	cudaSetDevice(0);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS, length, numSeq, NUM_THREADS);
+		   (d_lMax_localS, length, numSeq, NUM_THREADS, 0);
 
-	cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	cudaSetDevice(1);
+	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
+		   (d_lMax_localS+(NUM_THREADS/NUM_DEVICE), length, numSeq, NUM_THREADS, (NUM_THREADS/NUM_DEVICE));
 
+	cudaSetDevice(0);
+	cudaThreadSynchronize();		
+	cudaMemcpy(h_lMax_localS, d_lMax_localS, (NUM_THREADS/NUM_DEVICE), cudaMemcpyDeviceToHost);
+
+	cudaSetDevice(1);
+	cudaThreadSynchronize();	
+	cudaMemcpy(h_lMax_localS+(NUM_THREADS/NUM_DEVICE), d_lMax_localS + (NUM_THREADS/NUM_DEVICE), (NUM_THREADS/NUM_DEVICE), cudaMemcpyDeviceToHost);
+
+	cudaThreadSynchronize();	
+	cudaSetDevice(0);
+	cudaThreadSynchronize();
+	
 	char lMax_globalS = 0; //Variável com o máximo global de S
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
 
-	cudaThreadSynchronize();
 	end = clock();
 
 	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
