@@ -115,6 +115,18 @@ void calcLMaxGlobalS(char* lMax_globalS, char* lMax_localS, int tamVec){
 	}
 }
 
+//Com os valores de máximos locais de S, calcular o máximo global.
+unsigned long long calcMenorIndex(unsigned long long* indexS, int tamVec){
+	//Número de conjuntos
+	unsigned long long index = 0xFFFFFFFF;
+	for(int i = 0; i < tamVec; i++){
+		//printf("%d\n", lMax_localS[i]);
+		if(index > indexS[i]){
+			index = indexS[i];
+		}
+	}
+}
+
 //Seja S o conjunto de todas las sequencias dos n primeiros números naturais.
 //Defina R(s), com s \in S o conjunto de todas as sequencias que podem
 //ser geradas rotacionando S.
@@ -126,8 +138,8 @@ int main(int argc, char *argv[]){
 	//char* h_threadSequences;      //Vetor com as sequências criadas
 	char* d_lMax_localS;      //Vetor com os máximos locais de S, cada thread tem um máximo local
 	char* h_lMax_localS;
-	char* d_lMax_indexS;
-	char* h_lMax_indexS;      
+	unsigned long long* d_lMax_indexS;
+	unsigned long long* h_lMax_indexS;      
 
 	int length = atoi(argv[1]);
 	int NUM_THREADS = atoi(argv[2]);
@@ -141,7 +153,7 @@ int main(int argc, char *argv[]){
 	//h_sequence = (char*) malloc(length);
 	//h_threadSequences = (char*) malloc(length*NUM_THREADS);
 	h_lMax_localS = (char*) malloc(NUM_DEVICE*NUM_THREADS);
-	h_lMax_indexS = (char*) malloc(NUM_DEVICE*NUM_THREADS);
+	h_lMax_indexS = (unsigned long long*) malloc(NUM_DEVICE*NUM_THREADS*sizeof(unsigned long long));
 	//cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaMalloc(&d_lMax_localS, NUM_DEVICE*NUM_THREADS);
 	cudaMalloc(&d_lMax_indexS, NUM_DEVICE*NUM_THREADS);
@@ -162,11 +174,13 @@ int main(int argc, char *argv[]){
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS, d_lMax_indexS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);
 	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	cudaMemcpyAsync(h_lMax_indexS, d_lMax_indexS, NUM_THREADS*sizeof(unsigned long long), cudaMemcpyDeviceToHost);
 
 	cudaSetDevice(1);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS+NUM_THREADS, d_lMax_indexS + NUM_THREADS, length, numSeq, NUM_THREADS*NUM_DEVICE, NUM_THREADS);
 	cudaMemcpyAsync(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	cudaMemcpyAsync(h_lMax_indexS+NUM_THREADS, d_lMax_indexS + NUM_THREADS, NUM_THREADS*sizeof(unsigned long long), cudaMemcpyDeviceToHost);
 	
 	/*cudaSetDevice(0);
 	cudaThreadSynchronize();		
@@ -183,6 +197,7 @@ int main(int argc, char *argv[]){
 	char lMax_globalS = 0; //Variável com o máximo global de S
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
 
+	printf("Menor Indice Encontrado: %llu\n",calcMenorIndex(unsigned long long* indexS, int tamVec));
 	end = clock();
 
 	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
