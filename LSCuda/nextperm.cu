@@ -127,7 +127,7 @@ int main(int argc, char *argv[]){
 	char* h_lMax_localS;      
 
 	int length = atoi(argv[1]);
-	int NUM_THREADS = NUM_DEVICE*atoi(argv[2]);
+	int NUM_THREADS = atoi(argv[2]);
 	
 	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
@@ -147,31 +147,32 @@ int main(int argc, char *argv[]){
 
 	unsigned long long numSeq = fatorialHost(length-1)/2;
 	
-	dim3 num_blocks(ceil(((float) (NUM_THREADS/NUM_DEVICE))/(float) (THREAD_PER_BLOCK)));
+	dim3 num_blocks(ceil((float) NUM_THREADS/(float) (THREAD_PER_BLOCK)));
 	int tam_shared = length*THREAD_PER_BLOCK;
 
 	//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
 	//insere na variável
 	cudaSetDevice(0);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS, length, numSeq, NUM_THREADS, 0);
+		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);
 
 	cudaSetDevice(1);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS+(NUM_THREADS/NUM_DEVICE), length, numSeq, NUM_THREADS, (NUM_THREADS/NUM_DEVICE));
+		   (d_lMax_localS+NUM_THREADS, length, numSeq, NUM_THREADS*NUM_DEVICE, NUM_THREADS);
 
 	cudaSetDevice(0);
 	cudaThreadSynchronize();		
-	cudaMemcpy(h_lMax_localS, d_lMax_localS, (NUM_THREADS/NUM_DEVICE), cudaMemcpyDeviceToHost);
+	cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
 
 	cudaSetDevice(1);
 	cudaThreadSynchronize();	
-	cudaMemcpy(h_lMax_localS+(NUM_THREADS/NUM_DEVICE), d_lMax_localS + (NUM_THREADS/NUM_DEVICE), (NUM_THREADS/NUM_DEVICE), cudaMemcpyDeviceToHost);
-
-	cudaThreadSynchronize();	
+	cudaMemcpy(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	
 	cudaSetDevice(0);
 	cudaThreadSynchronize();
-	
+	cudaSetDevice(1);
+	cudaThreadSynchronize();
+
 	char lMax_globalS = 0; //Variável com o máximo global de S
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
 
