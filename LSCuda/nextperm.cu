@@ -170,8 +170,9 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();	
 	cudaMemcpy(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);*/
 	
-	cudaThreadSynchronize();
 	cudaSetDevice(0);
+	cudaThreadSynchronize();
+	cudaSetDevice(1);
 	cudaThreadSynchronize();	
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
