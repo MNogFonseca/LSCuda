@@ -8,7 +8,7 @@
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
 #define N 16
-#define NUM_DEVICE 2
+#define NUM_DEVICE 1
 
 __device__
 void printVector(char* array, int length){
@@ -157,11 +157,11 @@ int main(int argc, char *argv[]){
 		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);
 	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
 
-	cudaSetDevice(1);
+	/*cudaSetDevice(1);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS+NUM_THREADS, length, numSeq, NUM_THREADS*NUM_DEVICE, NUM_THREADS);
 	cudaMemcpyAsync(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
-	
+	*/
 	/*cudaSetDevice(0);
 	cudaThreadSynchronize();		
 	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
