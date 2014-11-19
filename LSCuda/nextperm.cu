@@ -175,7 +175,7 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();	
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
-	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_DEVICE*NUM_THREADS);	
+	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
 
 	end = clock();
 
