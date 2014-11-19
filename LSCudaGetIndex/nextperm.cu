@@ -125,6 +125,7 @@ unsigned long long calcMenorIndex(unsigned long long* indexS, int tamVec){
 			index = indexS[i];
 		}
 	}
+	return index;
 }
 
 //Seja S o conjunto de todas las sequencias dos n primeiros números naturais.
@@ -197,7 +198,7 @@ int main(int argc, char *argv[]){
 	char lMax_globalS = 0; //Variável com o máximo global de S
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_DEVICE*NUM_THREADS);	
 
-	printf("Menor Indice Encontrado: %llu\n",calcMenorIndex(unsigned long long* h_lMax_indexS, NUM_DEVICE*NUM_THREADS));
+	printf("Menor Indice Encontrado: %llu\n",calcMenorIndex(h_lMax_indexS, NUM_DEVICE*NUM_THREADS));
 	end = clock();
 
 	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
