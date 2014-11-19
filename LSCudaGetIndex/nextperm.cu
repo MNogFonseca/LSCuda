@@ -144,8 +144,9 @@ int main(int argc, char *argv[]){
 	h_lMax_indexS = (char*) malloc(NUM_DEVICE*NUM_THREADS);
 	//cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaMalloc(&d_lMax_localS, NUM_DEVICE*NUM_THREADS);
+	cudaMalloc(&d_lMax_indexS, NUM_DEVICE*NUM_THREADS);
 	cudaMemset(d_lMax_localS, 0, NUM_DEVICE*NUM_THREADS);
-	cudaMemset(d_lMax_localS, 0, NUM_DEVICE*NUM_THREADS);
+	
 
 	start = clock();
 	
