@@ -153,7 +153,7 @@ int main(int argc, char *argv[]){
 	//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
 	//insere na variável
 	int numDevs = 0;
-	cudaGetNumDevices(&numDevs);
+	cudaGetDeviceCount(&numDevs);
 	printf("Num devices: %d\n",numDevs);
 	cudaSetDevice(0);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
