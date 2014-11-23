@@ -152,12 +152,15 @@ int main(int argc, char *argv[]){
 
 	//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
 	//insere na variável
-	cudaSetDevice(1);
+	int numDevs = 0;
+	cudaGetNumDevices(&numDevs);
+	printf("Num devices: %d\n",numDevs);
+	cudaSetDevice(0);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);
 	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
 /*
-	cudaSetDevice(1);
+	cudaSetDevice(100);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS+NUM_THREADS, length, numSeq, NUM_THREADS*NUM_DEVICE, NUM_THREADS);
 	cudaMemcpyAsync(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
