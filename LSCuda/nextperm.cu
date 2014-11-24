@@ -198,9 +198,9 @@ int main(int argc, char *argv[]){
 	cudaSetDevice(1);
 	cudaThreadSynchronize();	*/
 
-	/*for(int i = 0; i < 2*NUM_THREADS; i++){
-		printf("%d - %d\n",i, h_lMax_localS[i]);
-	}*/
+	for(int i = 0; i < 2*NUM_THREADS; i++){
+		printf("%d - %d\n",i, h_lMax_localS0[i]);
+	}
 
 	end = clock();
 
