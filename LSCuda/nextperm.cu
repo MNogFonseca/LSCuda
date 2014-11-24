@@ -162,7 +162,7 @@ int main(int argc, char *argv[]){
 	cudaSetDevice(0);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 	   (d_lMax_localS0, length, numSeq, NUM_THREADS, 0);	
-	cudaMemcpyAsync(h_lMax_localS0, d_lMax_localS0, NUM_DEVICES*NUM_THREADS, cudaMemcpyDeviceToHost);
+	cudaMemcpyAsync(h_lMax_localS0, d_lMax_localS0, NUM_THREADS, cudaMemcpyDeviceToHost);
 	
 	cudaSetDevice(1);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
@@ -180,9 +180,9 @@ int main(int argc, char *argv[]){
 
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS1, NUM_THREADS);
 
-	for(int i = 0; i < NUM_THREADS; i++){
-		printf("%d - %d\n",i, h_lMax_localS1[i]);
-	}
+	/*for(int i = 0; i < NUM_THREADS; i++){
+		printf("%d - %d\n",i, h_lMax_localS0[i]);
+	}*/
 
 	end = clock();
 
