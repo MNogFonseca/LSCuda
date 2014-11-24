@@ -155,7 +155,7 @@ int main(int argc, char *argv[]){
 	int numDevs = 0;
 	cudaGetDeviceCount(&numDevs);
 	printf("Num devices: %d\n",numDevs);
-	for(int d = 0; i < numDevs; d++){
+	for(int d = 0; d < numDevs; d++){
 		cudaSetDevice(d);
 		decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);	
