@@ -138,7 +138,7 @@ unsigned long getIndex(char* vet, int n){
 
 	return index;
 }
-
+/*
 int main(){
 	char vetor[6];
 	int i = 0;
@@ -150,4 +150,4 @@ int main(){
 		}
 		printf("= %lu\n", getIndex(vetor, 6));
 	}
-}
+}*/
