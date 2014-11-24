@@ -158,10 +158,19 @@ int main(int argc, char *argv[]){
 	for(int d = 0; d < numDevs; d++){
 		cudaSetDevice(d);
 		decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);	
-		cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, d*NUM_THREADS);	
+	}
+
+	for(int d = 0; d < numDevs; d++){
+		cudaSetDevice(d);
+		cudaThreadSynchronize();
 	}
 	
+	for(int d = 0; d < numDevs; d++){
+		cudaSetDevice(d);
+		cudaMemcpyAsync(h_lMax_localS+d*NUM_THREADS, d_lMax_localS + d*NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	}
+
 /*
 	cudaSetDevice(100);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
@@ -174,12 +183,12 @@ int main(int argc, char *argv[]){
 
 	cudaSetDevice(1);
 	cudaThreadSynchronize();	
-	cudaMemcpy(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);*/
+	cudaMemcpy(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
 
 	cudaSetDevice(0);
 	cudaThreadSynchronize();
 	cudaSetDevice(1);
-	cudaThreadSynchronize();	
+	cudaThreadSynchronize();	*/
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
