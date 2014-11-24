@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include "LIS.cu"
 #include "LDS.cu"
-//#include "EnumaratorSequence.cu"
+#include "EnumaratorSequence.c"
 #include <time.h>
+
 
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
@@ -177,21 +178,21 @@ int main(int argc, char *argv[]){
 	cudaMalloc(&d_lMax_localS, NUM_THREADS);
 	cudaMemset(d_lMax_localS, 0, NUM_THREADS);
 
-	//Gera a sequência primária, de menor ordem léxica	
-	for(int i = 0; i < length; i++)
-		h_sequence[i] = i+1;
 	unsigned int numSeqReady = 0; //Número de sequêcias prontas para enviar para a GPU
 
 	start = clock();
 	
-	next_permutation(h_sequence+1,length-1); //Remover a primeira sequência, pois o resultado é sempre 1
+	//next_permutation(h_sequence+1,length-1); //Remover a primeira sequência, pois o resultado é sempre 1
+
 
 	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto. E -1 devido a remoção da primeira sequência
-	unsigned long counter = fatorial(length-1)/2 -1;
-	unsigned long counterMax = counter;
+	unsigned long long counter = fatorial(length-1)/2 -1;
+	unsigned long long index = 1;
+	getSequence(h_sequence, length, index);
+	index++;
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	while(counter){
+	while(counter > index){
 		//Gera todos os pivores do conjunto R
 		memcpy(h_threadSequences + numSeqReady*length, h_sequence, length);
 		numSeqReady++;
@@ -211,8 +212,9 @@ int main(int argc, char *argv[]){
 			numSeqReady = 0; 
 		}	
 		//Cria a próxima sequência na ordem lexicográfica
-		next_permutation(h_sequence+1,length-1);
-		counter--;
+		getSequence(h_sequence, length, index);
+		//next_permutation(h_sequence+1,length-1);
+		index++;
 		
 		/*if((counterMax - counter)%(counterMax/100+1) == 0){
 			end = clock();
