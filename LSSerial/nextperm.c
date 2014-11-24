@@ -4,7 +4,7 @@
 #include "LDS.c"
 #include <time.h>
 #include <string.h>
-#include "EnumaratorSequence.cu"
+#include "EnumaratorSequence.c"
 
 
 void rotation(char *array, int length){
