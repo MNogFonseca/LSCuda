@@ -189,12 +189,12 @@ int main(int argc, char *argv[]){
 	//Dividido por 2, porque a inversão cobre metade do conjunto. E -1 devido a remoção da primeira sequência
 	unsigned long long counter = fatorial(length-1)/2 -1;
 	unsigned long long index = 1;
-	getSequence(h_sequence, length, index);
-	index++;
+	//getSequence(h_sequence, length, index);
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 	while(counter > index){
 		//Gera todos os pivores do conjunto R
-		memcpy(h_threadSequences + numSeqReady*length, h_sequence, length);
+		getSequence(h_threadSequences+numSeqReady*length, length, index);
+		//memcpy(h_threadSequences + numSeqReady*length, h_sequence, length);
 		numSeqReady++;
 
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
@@ -212,7 +212,6 @@ int main(int argc, char *argv[]){
 			numSeqReady = 0; 
 		}	
 		//Cria a próxima sequência na ordem lexicográfica
-		getSequence(h_sequence, length, index);
 		//next_permutation(h_sequence+1,length-1);
 		index++;
 		
