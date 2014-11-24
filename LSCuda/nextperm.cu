@@ -159,7 +159,7 @@ int main(int argc, char *argv[]){
 		cudaSetDevice(d);
 		decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, d*NUM_THREADS);	
-		   
+
 	}
 	
 	for(int d = 0; d < numDevs; d++){
@@ -190,6 +190,10 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();
 	cudaSetDevice(1);
 	cudaThreadSynchronize();	*/
+
+	for(int i = 0; i < 2*NUM_THREADS; i++){
+		printf("%d\n", h_lMax_localS[i]);
+	}
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
