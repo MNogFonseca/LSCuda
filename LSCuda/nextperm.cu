@@ -8,7 +8,7 @@
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
 #define N 16
-#define NUM_DEVICE 2
+#define NUM_DEVICES 2
 
 __device__
 void printVector(char* array, int length){
@@ -208,8 +208,10 @@ int main(int argc, char *argv[]){
 
 	printf("Lmax R = %d\n",lMax_globalS);
 
-	free(h_lMax_localS);
+	free(h_lMax_localS0);
+	free(h_lMax_localS1);
 	//cudaFree(d_threadSequences);
-	cudaFree(d_lMax_localS);
+	cudaFree(d_lMax_localS0);
+	cudaFree(d_lMax_localS1);
 }
 
