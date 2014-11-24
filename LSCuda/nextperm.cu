@@ -155,10 +155,13 @@ int main(int argc, char *argv[]){
 	int numDevs = 0;
 	cudaGetDeviceCount(&numDevs);
 	printf("Num devices: %d\n",numDevs);
-	cudaSetDevice(0);
-	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);
-	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	for(int d = 0; i < numDevs; d++){
+		cudaSetDevice(d);
+		decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
+		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);	
+		cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	}
+	
 /*
 	cudaSetDevice(100);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
