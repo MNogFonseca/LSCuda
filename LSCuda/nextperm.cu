@@ -144,9 +144,9 @@ int main(int argc, char *argv[]){
 	//cudaMalloc(&d_threadSequences, length*NUM_THREADS);
 	cudaSetDevice(0);
 	cudaMalloc(&d_lMax_localS0, NUM_THREADS);
+	cudaMemset(d_lMax_localS0, 0, NUM_THREADS);
 	cudaSetDevice(1);
 	cudaMalloc(&d_lMax_localS1, NUM_THREADS);
-	cudaMemset(d_lMax_localS0, 0, NUM_THREADS);
 	cudaMemset(d_lMax_localS1, 1, NUM_THREADS);
 
 	start = clock();
@@ -179,24 +179,6 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();
 
 	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS1, NUM_THREADS);
-	/*
-	cudaSetDevice(100);
-	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS+NUM_THREADS, length, numSeq, NUM_THREADS*NUM_DEVICE, NUM_THREADS);
-	cudaMemcpyAsync(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
-	
-	/*cudaSetDevice(0);
-	cudaThreadSynchronize();		
-	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
-
-	cudaSetDevice(1);
-	cudaThreadSynchronize();	
-	cudaMemcpy(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
-
-	cudaSetDevice(0);
-	cudaThreadSynchronize();
-	cudaSetDevice(1);
-	cudaThreadSynchronize();	*/
 
 	for(int i = 0; i < NUM_THREADS; i++){
 		printf("%d - %d\n",i, h_lMax_localS1[i]);
