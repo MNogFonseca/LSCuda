@@ -199,7 +199,7 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();	*/
 
 	for(int i = 0; i < NUM_THREADS; i++){
-		printf("%d - %d\n",i, h_lMax_localS0[i]);
+		printf("%d - %d\n",i, h_lMax_localS1[i]);
 	}
 
 	end = clock();
