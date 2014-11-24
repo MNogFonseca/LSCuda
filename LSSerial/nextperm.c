@@ -75,22 +75,18 @@ int main(int argc, char* argv[]){
 
 	start = clock();
 	
-	int i;
-	for(i = 0; i < length; i++)
-		vector[i] = i+1;
 
 	unsigned int lmaxS = 0;
 	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
 	//Dividido por 2, porque a inversão cobre metade do conjunto.
-	int counter = fatorial(length-1)/2;
-	printf("counter: %d\n",counter);
-	int flag = 1;
+	unsigned long long counter = fatorial(length-1)/2;
+	int index = 1;
     //Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
 
 	unsigned int lLIS, lLDS;
-	while(counter){
+	while(counter > index){
 		counter--;
-		next_permutation(vector+1,length-1);
+		getSequence(vector, length, index);
 
 		unsigned int lminR = length;	
 		
@@ -133,6 +129,7 @@ int main(int argc, char* argv[]){
 		if(lmaxS < lminR){
 			lmaxS = lminR;
 		}
+		index++;
 	}
 	end = clock();
 	
