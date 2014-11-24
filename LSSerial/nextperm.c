@@ -105,6 +105,7 @@ int main(int argc, char* argv[]){
 			continue;
 
 		memcpy(vecRotation,vector,length);
+		int i;
 		for(i = 0; i < length-1; i++){
 			rotation(vecRotation, length);
 
