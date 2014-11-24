@@ -159,7 +159,7 @@ int main(int argc, char *argv[]){
 		cudaSetDevice(d);
 		decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
 		   (d_lMax_localS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);	
-		//cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+		cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
 	}
 	
 /*
