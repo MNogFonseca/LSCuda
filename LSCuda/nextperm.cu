@@ -192,7 +192,7 @@ int main(int argc, char *argv[]){
 	cudaThreadSynchronize();	*/
 
 	for(int i = 0; i < 2*NUM_THREADS; i++){
-		printf("%d\n", h_lMax_localS[i]);
+		printf("%d - %d\n",i, h_lMax_localS[i]);
 	}
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
