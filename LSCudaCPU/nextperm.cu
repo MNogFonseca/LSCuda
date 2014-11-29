@@ -223,10 +223,10 @@ int main(int argc, char *argv[]){
 
 	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
 	if(numSeqReady != 0){
-		cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*(2*length-1), cudaMemcpyHostToDevice);
+		cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*length, cudaMemcpyHostToDevice);
 			
 		dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-		int tam_shared = ((length+1)*(length+1)+(3*length-1))*THREAD_PER_BLOCK*sizeof(int);
+		int tam_shared = length*THREAD_PER_BLOCK;
 		
 		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
 			       (d_threadSequences, d_lMax_localS, length, numSeqReady);
