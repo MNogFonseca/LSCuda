@@ -8,7 +8,7 @@
 //#define NUM_THREADS 1024
 #define THREAD_PER_BLOCK 128
 #define N 16
-#define NUM_DEVICE 2
+#define NUM_DEVICES 2
 
 __device__
 void printVector(char* array, int length){
@@ -50,7 +50,7 @@ unsigned long long fatorialHost(unsigned long long n){
 //Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
 //Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
 __global__
-void decideLS(char* d_lMax_S, unsigned long long* d_index_S,  int length, unsigned long long maxSeq, int numThreads, int initThread){
+void decideLS(char* d_lMax_S, int length, unsigned long long maxSeq, int numThreads, int initThread){
 	extern __shared__ char s_vet[];
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
 	int s_index = length*threadIdx.x; //Indice da shared memory
@@ -58,7 +58,7 @@ void decideLS(char* d_lMax_S, unsigned long long* d_index_S,  int length, unsign
 
 	//Esses dois vetores são utilizados no LIS e no LDS, são declarados do lado de fora para
 	//gastar menos memória e não ter necessidade de dar malloc.
-	char MP[N*(N+1)/2]; //Vetor de most promising
+	char MP[(N+1)*(N+1)]; //Vetor de most promising
 	char last[N]; //Vetor de last de MP
 	//Valores com os resultados encontrados no LIS e no LDS
 	char lLIS, lLDS;
@@ -98,7 +98,6 @@ void decideLS(char* d_lMax_S, unsigned long long* d_index_S,  int length, unsign
 		//Que o minimo local encontrado até o momento.
 		if(flagFinalLoop){
 			d_lMax_S[tid] = lMin_R;
-			d_index_S[tid] = indexSeq;
 		}
 		indexSeq += numThreads;
 	}
@@ -115,19 +114,6 @@ void calcLMaxGlobalS(char* lMax_globalS, char* lMax_localS, int tamVec){
 	}
 }
 
-//Com os valores de máximos locais de S, calcular o máximo global.
-unsigned long long calcMenorIndex(unsigned long long* indexS, int tamVec){
-	//Número de conjuntos
-	unsigned long long index = 0xFFFFFFFF;
-	for(int i = 0; i < tamVec; i++){
-		//printf("%d\n", lMax_localS[i]);
-		if(index > indexS[i]){
-			index = indexS[i];
-		}
-	}
-	return index;
-}
-
 //Seja S o conjunto de todas las sequencias dos n primeiros números naturais.
 //Defina R(s), com s \in S o conjunto de todas as sequencias que podem
 //ser geradas rotacionando S.
@@ -137,10 +123,10 @@ unsigned long long calcMenorIndex(unsigned long long* indexS, int tamVec){
 int main(int argc, char *argv[]){
 	//char* h_sequence;            //Vetor com a sequência pivor do grupo
 	//char* h_threadSequences;      //Vetor com as sequências criadas
-	char* d_lMax_localS;      //Vetor com os máximos locais de S, cada thread tem um máximo local
-	char* h_lMax_localS;
-	unsigned long long* d_lMax_indexS;
-	unsigned long long* h_lMax_indexS;      
+	char* d_lMax_localS0;      //Vetor com os máximos locais de S, cada thread tem um máximo local
+	char* d_lMax_localS1;
+	char* h_lMax_localS0;
+	char* h_lMax_localS1;      
 
 	int length = atoi(argv[1]);
 	int NUM_THREADS = atoi(argv[2]);
@@ -153,13 +139,15 @@ int main(int argc, char *argv[]){
 	//Aloca memória dos vetores	
 	//h_sequence = (char*) malloc(length);
 	//h_threadSequences = (char*) malloc(length*NUM_THREADS);
-	h_lMax_localS = (char*) malloc(NUM_DEVICE*NUM_THREADS);
-	h_lMax_indexS = (unsigned long long*) malloc(NUM_DEVICE*NUM_THREADS*sizeof(unsigned long long));
+	h_lMax_localS0 = (char*) malloc(NUM_THREADS);
+	h_lMax_localS1 = (char*) malloc(NUM_THREADS);
 	//cudaMalloc(&d_threadSequences, length*NUM_THREADS);
-	cudaMalloc(&d_lMax_localS, NUM_DEVICE*NUM_THREADS);
-	cudaMalloc(&d_lMax_indexS, NUM_DEVICE*NUM_THREADS);
-	cudaMemset(d_lMax_localS, 0, NUM_DEVICE*NUM_THREADS);
-	
+	cudaSetDevice(0);
+	cudaMalloc(&d_lMax_localS0, NUM_THREADS);
+	cudaMemset(d_lMax_localS0, 0, NUM_THREADS);
+	cudaSetDevice(1);
+	cudaMalloc(&d_lMax_localS1, NUM_THREADS);
+	cudaMemset(d_lMax_localS1, 1, NUM_THREADS);
 
 	start = clock();
 	
@@ -173,40 +161,42 @@ int main(int argc, char *argv[]){
 	//insere na variável
 	cudaSetDevice(0);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS, d_lMax_indexS, length, numSeq, NUM_THREADS*NUM_DEVICE, 0);
-	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
-	cudaMemcpyAsync(h_lMax_indexS, d_lMax_indexS, NUM_THREADS*sizeof(unsigned long long), cudaMemcpyDeviceToHost);
-
+	   (d_lMax_localS0, length, numSeq, NUM_DEVICES*NUM_THREADS, 0);	
+	
 	cudaSetDevice(1);
 	decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-		   (d_lMax_localS+NUM_THREADS, d_lMax_indexS + NUM_THREADS, length, numSeq, NUM_THREADS*NUM_DEVICE, NUM_THREADS);
-	cudaMemcpyAsync(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);
-	cudaMemcpyAsync(h_lMax_indexS+NUM_THREADS, d_lMax_indexS + NUM_THREADS, NUM_THREADS*sizeof(unsigned long long), cudaMemcpyDeviceToHost);
-	
-	/*cudaSetDevice(0);
-	cudaThreadSynchronize();		
-	cudaMemcpyAsync(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
+	   (d_lMax_localS1, length, numSeq, NUM_DEVICES*NUM_THREADS, NUM_THREADS);	
 
-	cudaSetDevice(1);
-	cudaThreadSynchronize();	
-	cudaMemcpy(h_lMax_localS+NUM_THREADS, d_lMax_localS + NUM_THREADS, NUM_THREADS, cudaMemcpyDeviceToHost);*/
-	
-	cudaThreadSynchronize();
 	cudaSetDevice(0);
-	cudaThreadSynchronize();	
+	cudaMemcpyAsync(h_lMax_localS0, d_lMax_localS0, NUM_THREADS, cudaMemcpyDeviceToHost);
+	cudaSetDevice(1);
+	cudaMemcpyAsync(h_lMax_localS1, d_lMax_localS1, NUM_THREADS, cudaMemcpyDeviceToHost);
+
+	cudaSetDevice(0);
+	cudaThreadSynchronize();
 
 	char lMax_globalS = 0; //Variável com o máximo global de S
-	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_DEVICE*NUM_THREADS);	
+	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS0, NUM_THREADS);	
+	
+	cudaSetDevice(1);
+	cudaThreadSynchronize();
 
-	printf("Menor Indice Encontrado: %llu\n",calcMenorIndex(h_lMax_indexS, NUM_DEVICE*NUM_THREADS));
+	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS1, NUM_THREADS);
+
+	/*for(int i = 0; i < NUM_THREADS; i++){
+		printf("%d - %d\n",i, h_lMax_localS0[i]);
+	}*/
+
 	end = clock();
 
 	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
 
 	printf("Lmax R = %d\n",lMax_globalS);
 
-	free(h_lMax_localS);
+	free(h_lMax_localS0);
+	free(h_lMax_localS1);
 	//cudaFree(d_threadSequences);
-	cudaFree(d_lMax_localS);
+	cudaFree(d_lMax_localS0);
+	cudaFree(d_lMax_localS1);
 }
 

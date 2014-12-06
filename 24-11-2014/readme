@@ -1,0 +1,3 @@
+Serial.rar -> Possui o código que executa somente na máquina (Usa sequência lexicográfica)
+LSCudaCPU -> Código que gera as sequências no host, e faz os calculos no device (Usa sequência lexicográfica)
+GPU.rar -> Códgigo que gera e executa os calculos na GPU (Usa sequências de 2-3)
