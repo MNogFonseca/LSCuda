@@ -2,46 +2,29 @@
 #include <stdio.h>
 #include "LIS.cu"
 #include "LDS.cu"
-#include "EnumaratorSequence.c"
 #include <time.h>
+#define NUM_THREADS 8192
+#define THREAD_BLOCK 1024
+#define LENGTH 10
 
-
-//#define NUM_THREADS 1024
-#define THREAD_PER_BLOCK 128
-#define N 16
-
-__device__
-void printVector(char* array, int length){
-	for(int k = 0; k < length; k++){
-		printf("%d - ",array[k]);	
+void inversion(char* dest, char* in, int length){
+	int i;
+	for(i = 0; i < length; i++){
+		dest[i] = in[length-i-1];
 	}
-	printf("\n");
 }
 
-__device__
-void inversion(char* vet, int length){
-	char temp;
-	for(int i = 0; i < length/2; i++){
-		temp = vet[length-i-1];
-		vet[length-i-1] = vet[i];
-		vet[i] = temp;
-	}	
+void rotation(char* dest, char* in, int length){
+  int i;	
+  dest[0] = in[length-1];
+  for (i = 1; i < length; i++)
+     dest[i] = in[i-1];
+
 }
 
-__device__
-void rotation(char *array, int length){
-  char temp;
-  int i;
-  temp = array[0];
-  for (i = 0; i < length-1; i++)
-     array[i] = array[i+1];
-  array[i] = temp;
-}
-
-//faz a proxima permutação na ordem lexicográfica
 int next_permutation(char *array, size_t length) {
 	size_t i, j;
-	char temp;
+	int temp;
 	// Find non-increasing suffix
 	if (length == 0)
 		return 0;
@@ -71,183 +54,158 @@ int next_permutation(char *array, size_t length) {
 	return 1;
 }
 
-unsigned long fatorial(unsigned long n){
+int fatorial(int n){
 	int i;
-	unsigned long result = 1;
+	int result = 1;
 	for(i = n; i > 1; i--){
 		result *= i;
 	}
 	return result;
 }
 
-//Calcula o LIS de todo o conjunto R partindo do pivor principal da ordem lexico gráfica
-//Caso encontre um valor que é menor do que o máximo local de S, então ele retorna e não faz os outros calculos.
+void criaSequencias(char* dest, char* in,int length, unsigned int* numSeqReady){
+	//Inserir o pivor em primeiro lugar, e sua inversão
+	memcpy(dest,in, sizeof(int)*length);
+	inversion(dest+length, dest, length);
+	*numSeqReady += 2;
+
+	//Rotaciona o pivor, e inverte os elementos produzidos
+	int i;
+	for(i = 0; i < (length-1); i++, *numSeqReady+=2){
+		rotation(dest + (*numSeqReady)*length,dest + (*numSeqReady-2)*length, length); //Diminuição de dois elementos, para pular a inversão do pivor
+		inversion(dest + (*numSeqReady+1)*length,dest+(*numSeqReady)*length, length);		
+	}
+}
+
+//Min(|LIS(s)|, |LDS(s)|)
 __global__
-void decideLS(char *vector, char* d_lMax_S, int length, int numThread){
-	extern __shared__ char s_vet[];
-	int tid = threadIdx.x + blockIdx.x*blockDim.x; 	
-	int s_index = length*threadIdx.x; //Indice da shared memory
+void decideLS(char *vector, unsigned int* lmin, int length, int numThread){
+	int index = threadIdx.x + blockIdx.x*blockDim.x;
+	if(index < numThread){
+		unsigned int lLIS, lLDS; 
+	
+		lLIS = LIS(vector+index*length, length);
+		lLDS = LDS(vector+index*length, length);
 
-	if(tid < numThread){
-		//carrega o vetor na shared memory
-		for(int i = 0; i < length; i++){
-			s_vet[s_index+i] = vector[tid*length+i];
+		lmin[index] = lLIS;
+
+		if(lLDS < lmin[index]){
+			lmin[index] = lLDS;	
 		}
-		
-		//Esses dois vetores são utilizados no LIS e no LDS, são declarados do lado de fora para
-		//gastar menos memória e não ter necessidade de dar malloc.
-		char MP[N*(N+1)/2]; //Vetor de most promising
-		char last[N]; //Vetor de last de MP
-
-		//Valores com os resultados encontrados no LIS e no LDS
-		char lLIS, lLDS; 
-
-		char lMin_R = 127; //Variavel que representa o min encontrado no conjunto R
-
-		for(int i = 0; i < length; i++){ //Rotação
-
-			lLIS = LIS(s_vet + s_index, last, MP, length);
-			//caso seja menor que o minimo do conjunto R, então modificar o valor
-			if(lLIS < lMin_R){
-				lMin_R = lLIS;	
-			}
-
-			//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-			if(lLIS <= d_lMax_S[tid]){
-				return;				
-			}
-
-			lLDS = LDS(s_vet + s_index, last, MP, length);
-			//caso seja menor que o minimo do conjunto R, então modificar o valor
-			if(lLDS < lMin_R){				
-				lMin_R = lLDS;
-			}
-
-			//Todo o conjunto pode ser descartado, pois não vai subistituir lMax_S no resultado final
-			if(lLDS <= d_lMax_S[tid]){
-				return;
-			}
-
-			rotation(s_vet + s_index, length);
-		}
-		//Caso o resultado final encontrado de R chegue ate o final, então significa que ele é maior
-		//Que o minimo local encontrado até o momento.
-		if(lMin_R == 6){
-			printVector(s_vet+s_index, length);
-		}
-		d_lMax_S[tid] = lMin_R;		
 	}
+	
 }
 
-//Com os valores de máximos locais de S, calcular o máximo global.
-void calcLMaxGlobalS(char* lMax_globalS, char* lMax_localS, int tamVec){
+int reduceLMinR(unsigned int* lMin_s, int tam){
+	int i;
+	unsigned int lMin_R = 0xFF;
+	for(i = 0; i < tam; i++){
+		if(lMin_R > lMin_s[i]){
+			lMin_R = lMin_s[i];	
+		}
+	}
+	return lMin_R;
+}
+
+void calcLMaxS(unsigned char* lMax_S, unsigned char* lMin_s, int tamVec, int tamGroup){
+	int i;
+	unsigned int lMin_R;
 	//Número de conjuntos
-	for(int i = 0; i < tamVec; i++){
-		if(*lMax_globalS < lMax_localS[i]){
-			*lMax_globalS = lMax_localS[i];
+	for(i = 0; i < tamVec/tamGroup; i++){
+		lMin_R = reduceLMinR(lMin_s+i*tamGroup, tamGroup);
+		if(*lMax_S < lMin_R){
+			*lMax_S = lMin_R;
 		}
 	}
-}
 
+}
 //Seja S o conjunto de todas las sequencias dos n primeiros números naturais.
 //Defina R(s), com s \in S o conjunto de todas as sequencias que podem
 //ser geradas rotacionando S.
 //Defina LIS(s) e LDS(s) como você sabe e sejam |LIS(s)| e |LDS(s)| suas
 //cardinalidades.
 //Determinar Max_{s \in S}(Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)))
+
+
 int main(int argc, char *argv[]){
 	char* h_sequence;            //Vetor com a sequência pivor do grupo
 	char* h_threadSequences;      //Vetor com as sequências criadas
 	char* d_threadSequences;	    //Sequências produzidas para enviar para o device
-	char* d_lMax_localS;      //Vetor com os máximos locais de S, cada thread tem um máximo local
-	char* h_lMax_localS;      
+	unsigned int* d_lMin_s;      //Vetor com os resultados de cada thread. L Mínimos do conjunto de R
+	unsigned int* h_lMin_s;      
 
 	int length = atoi(argv[1]);
-	int NUM_THREADS = atoi(argv[2]);
-	
-	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
-	//cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
-	
 	clock_t start,end;
 
 	//Aloca memória dos vetores	
-	h_sequence = (char*) malloc(length);
-	h_threadSequences = (char*) malloc(length*NUM_THREADS);
-	h_lMax_localS = (char*) malloc(NUM_THREADS);
-	cudaMalloc(&d_threadSequences, length*NUM_THREADS);
-	cudaMalloc(&d_lMax_localS, NUM_THREADS);
-	cudaMemset(d_lMax_localS, 0, NUM_THREADS);
+	h_sequence = (int*) malloc(sizeof(int)*length);
+	h_threadSequences = (int*) malloc(sizeof(int)*length*NUM_THREADS);
+	h_lMin_s = (unsigned int*) malloc(sizeof(unsigned int)*NUM_THREADS);
+	cudaMalloc(&d_threadSequences, sizeof(int)*length*NUM_THREADS);
+	cudaMalloc(&d_lMin_s, sizeof(int)*NUM_THREADS);
 
-	unsigned int numSeqReady = 0; //Número de sequêcias prontas para enviar para a GPU
+	//Gera a sequencia primária, de menor ordem léxica	
+	int i;
+	for(i = 0; i < length; i++)
+		h_sequence[i] = i+1;
+
+	unsigned int numSeqReady = 0; //Número de sequêcias prontas
+	unsigned int numSeqReadyAnt = 0;
 
 	start = clock();
-	
-	//next_permutation(h_sequence+1,length-1); //Remover a primeira sequência, pois o resultado é sempre 1
+	unsigned int lMax_S = 0;
 
+	//Length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
+	//Dividido por 2, porque a inversão cobre metade do conjunto.
+	int counter = fatorial(length-1)/2;
+        
+    //Número de elementos em cada conjunto. Length (rotação) * 2 (inversão)    
+	int tamGroup = 2*length;
 
-	//length -1 porque devido a rotação pode sempre deixar o primeiro número fixo, e alternar os seguintes
-	//Dividido por 2, porque a inversão cobre metade do conjunto. E -1 devido a remoção da primeira sequência
-	unsigned long long counter = fatorial(length-1)/2 -1;
-	unsigned long long index = 1;
-	//getSequence(h_sequence, length, index);
 	//Cada loop gera um conjunto de sequências. Elementos de S. Cada elemento possui um conjunto de R sequencias.
-	while(counter > index){
-		//Gera todos os pivores do conjunto R
-		getSequence(h_threadSequences+numSeqReady*length, length, index);
-		//memcpy(h_threadSequences + numSeqReady*length, h_sequence, length);
-		numSeqReady++;
+	while(counter){
+		
+		//Gera todo o conjunto R
+		criaSequencias(h_threadSequences + numSeqReady*length, //Vetor com as sequências geradas
+		    		   h_sequence, //Vetor pivor
+                       length,
+			           &numSeqReady); //Número de threads prontos
 
+		if(numSeqReadyAnt != 0){
+			cudaThreadSynchronize();
+			//Envia os resultados obtidos para o host
+			cudaMemcpy(h_lMin_s, d_lMin_s, sizeof(unsigned int)*numSeqReady, cudaMemcpyDeviceToHost);
+
+			cudaThreadSynchronize();	
+			calcLMaxS(&lMax_S, h_lMin_s, numSeqReadyAnt, tamGroup);
+		}
+		
 		//Caso não tenha como inserir mais un conjunto inteiro no número de threads, então executa:
-		if(numSeqReady == NUM_THREADS){
-			cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*length, cudaMemcpyHostToDevice);
-			
-			dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-			int tam_shared = length*THREAD_PER_BLOCK;
+		if((numSeqReady+tamGroup) < NUM_THREADS){
 
-			//Cada thread calcula: Min_{s' \in R(s)}(Min(|LIS(s)|, |LDS(s)|)), e se o resultado for maior que o máximo local,
-			//insere na variável
-			decideLS<<<num_blocks, THREAD_PER_BLOCK,  tam_shared>>>
-					   (d_threadSequences, d_lMax_localS, length, numSeqReady);
-			//Recomeça a gerar sequências
+			cudaMemcpy(d_threadSequences, h_threadSequences, sizeof(int)*numSeqReady*length, cudaMemcpyHostToDevice);
+			cudaThreadSynchronize();
+			//Cada thread calcula o LIS e o LDS de cada sequência
+			decideLS<<<numSeqReady%THREAD_BLOCK, ceil(((float) numSeqReady)/(float) THREAD_BLOCK)>>>(d_threadSequences, d_lMin_s, length, numSeqReady);
+
+			
+			numSeqReadyAnt = numSeqReady;
 			numSeqReady = 0; 
 		}	
+
 		//Cria a próxima sequência na ordem lexicográfica
-		//next_permutation(h_sequence+1,length-1);
-		index++;
-		
-		/*if((counterMax - counter)%(counterMax/100+1) == 0){
-			end = clock();
-			printf("%lu%% - Tempo: %f s - Counter: %lu\n",((counterMax - counter)/(counterMax/100+1)), (float)(end-start)/CLOCKS_PER_SEC, counter);
-		}*/
+		next_permutation(h_sequence+1,length-1);
+		counter--;
 	}
-
-	//Calculo do Resto, que foi gerado, porèm não encheu o vetor de sequências geradas.
-	if(numSeqReady != 0){
-		cudaMemcpy(d_threadSequences, h_threadSequences, numSeqReady*length, cudaMemcpyHostToDevice);
-			
-		dim3 num_blocks(ceil(((float) numSeqReady)/(float) THREAD_PER_BLOCK));
-		int tam_shared = length*THREAD_PER_BLOCK;
-		
-		decideLS<<<num_blocks,THREAD_PER_BLOCK, tam_shared>>>
-			       (d_threadSequences, d_lMax_localS, length, numSeqReady);
-		
-	}
-
-	cudaMemcpy(h_lMax_localS, d_lMax_localS, NUM_THREADS, cudaMemcpyDeviceToHost);
-
-	char lMax_globalS = 0; //Variável com o máximo global de S
-	calcLMaxGlobalS(&lMax_globalS, h_lMax_localS, NUM_THREADS);	
-
-	cudaThreadSynchronize();
 	end = clock();
 
-	printf("100%% - Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
+	printf("Tempo: %f s\n", (float)(end-start)/CLOCKS_PER_SEC);
 
-	printf("Lmax R = %d\n",lMax_globalS);
+	printf("Lmax R = %d\n",lMax_S);
 
 	free(h_sequence);
 	free(h_threadSequences);
-	free(h_lMax_localS);
+	free(h_lMin_s);
 	cudaFree(d_threadSequences);
-	cudaFree(d_lMax_localS);
+	cudaFree(d_lMin_s);
 }

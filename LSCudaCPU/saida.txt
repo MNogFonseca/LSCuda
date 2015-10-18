@@ -1,0 +1,57 @@
+100% - Tempo: 0.000588 s
+Lmax R = 0
+100% - Tempo: 0.005443 s
+Lmax R = 3
+100% - Tempo: 0.054765 s
+Lmax R = 4
+100% - Tempo: 0.650320 s
+Lmax R = 4
+100% - Tempo: 8.146696 s
+Lmax R = 4
+100% - Tempo: 115.336479 s
+Lmax R = 5
+100% - Tempo: 1766.363525 s
+Lmax R = 5
+100% - Tempo: 28378.007812 s
+Lmax R = 5
+100% - Tempo: 0.002104 s
+Lmax R = 3
+100% - Tempo: 0.011748 s
+Lmax R = 3
+100% - Tempo: 0.058950 s
+Lmax R = 4
+100% - Tempo: 0.653900 s
+Lmax R = 4
+100% - Tempo: 8.035691 s
+Lmax R = 4
+100% - Tempo: 1764.873657 s
+Lmax R = 5
+100% - Tempo: 28402.193359 s
+Lmax R = 5
+Criar sequência 0.003301 s
+Transferir: 0.000110 s
+Calcular: 0.001252 s
+Criar sequência 0.008736 s
+Transferir: 0.000103 s
+Calcular: 0.001896 s
+Criar sequência 0.008510 s
+Transferir: 0.000118 s
+Calcular: 0.004234 s
+Criar sequência 0.013997 s
+Transferir: 0.000137 s
+Calcular: 0.007800 s
+Criar sequência 0.022973 s
+Transferir: 0.000162 s
+Calcular: 0.012772 s
+Criar sequência 0.022112 s
+Transferir: 0.000174 s
+Calcular: 0.019534 s
+Criar sequência 0.026555 s
+Transferir: 0.000202 s
+Calcular: 0.044246 s
+Criar sequência 0.037333 s
+Transferir: 0.000212 s
+Calcular: 0.005852 s
+Criar sequência 0.046649 s
+Transferir: 0.000229 s
+Calcular: 0.005686 s

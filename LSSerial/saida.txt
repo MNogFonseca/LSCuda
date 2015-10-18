@@ -1,0 +1,19 @@
+counter: 1002155008
+16 -> Tempo: 5262.222656 s
+Lmax S = 5
+8 -> Tempo: 0.004623 s
+Lmax S = 3
+9 -> Tempo: 0.036178 s
+Lmax S = 3
+10 -> Tempo: 0.203792 s
+Lmax S = 4
+11 -> Tempo: 2.521092 s
+Lmax S = 4
+12 -> Tempo: 37.589523 s
+Lmax S = 4
+13 -> Tempo: 351.769867 s
+Lmax S = 5
+14 -> Tempo: 5571.579102 s
+Lmax S = 5
+15 -> Tempo: 103319.906250 s
+Lmax S = 5
